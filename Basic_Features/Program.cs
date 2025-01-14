@@ -73,7 +73,8 @@ public class BoardingGate
 
     public double CalculateFees()
     {
-        return Flight?.CalculateFees() ?? 0;
+        double baseFee = 300;
+        return baseFee;
     }
 
     public override string ToString()
@@ -145,7 +146,7 @@ public class NORMFlight : Flight
 {
     public override double CalculateFees()
     {
-        return ; 
+         return Destination == "Singapore (SIN)" ? 500 : 800; //SG Destination = 500, else 800//
     }
 
     public override string ToString()
@@ -161,7 +162,7 @@ public class LWTTFlight : Flight
 
     public override double CalculateFees()
     {
-        return RequestFee + ; 
+        (Destination == "Singapore (SIN)" ? 500 : 800) + 500; 
     }
 
     public override string ToString()
@@ -176,7 +177,7 @@ public class DDJBFlight : Flight
 
     public override double CalculateFees()
     {
-        return RequestFee + ; 
+        (Destination == "Singapore (SIN)" ? 500 : 800) + 300; 
     }
 
     public override string ToString()
@@ -191,7 +192,7 @@ public class CFFTFlight : Flight
 
     public override double CalculateFees()
     {
-        return RequestFee + ;
+        (Destination == "Singapore (SIN)" ? 500 : 800) + 150;
     }
 
     public override string ToString()
