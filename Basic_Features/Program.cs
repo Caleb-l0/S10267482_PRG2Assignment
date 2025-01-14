@@ -146,7 +146,7 @@ public class NORMFlight : Flight
 {
     public override double CalculateFees()
     {
-         return Destination == "Singapore (SIN)" ? 500 : 800; //SG Destination = 500, else 800//
+         return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee; //SG Destination = 500, else 800//
     }
 
     public override string ToString()
@@ -162,7 +162,7 @@ public class LWTTFlight : Flight
 
     public override double CalculateFees()
     {
-        (Destination == "Singapore (SIN)" ? 500 : 800) + 500; 
+        (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 500; 
     }
 
     public override string ToString()
@@ -177,7 +177,7 @@ public class DDJBFlight : Flight
 
     public override double CalculateFees()
     {
-        (Destination == "Singapore (SIN)" ? 500 : 800) + 300; 
+        (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 300; 
     }
 
     public override string ToString()
@@ -192,7 +192,7 @@ public class CFFTFlight : Flight
 
     public override double CalculateFees()
     {
-        (Destination == "Singapore (SIN)" ? 500 : 800) + 150;
+        (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 150;
     }
 
     public override string ToString()
@@ -205,7 +205,7 @@ class Program
 {
     public void CalculateTotalFee()
     {
-        return baseFee + CalculateFees();
+        return CalculateFees();
     }
     static void Main(string args[])
     {
