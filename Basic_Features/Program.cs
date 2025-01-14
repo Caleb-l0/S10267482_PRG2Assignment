@@ -14,6 +14,11 @@ class LWTTFlight
 {
     public double RequestFee { get; set; }
 
+    public LWTTFlight(double RequestFee)
+    {
+        RequestFee = this.RequestFee;
+    }
+
 
     class Airline
     {
