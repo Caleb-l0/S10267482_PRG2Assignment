@@ -58,6 +58,19 @@ public class BoardingGate
     public bool SupportsLWTT { get; set; }
     public Flight Flight { get; set; }
 
+
+    public BoardingGate(Flight flight)
+    {
+    GateName = this.GateName;
+    SupportsCFFT = this.SupportsCFFT;
+    SupportsDDJB = this.SupportsDDJB;
+    SupportsLWTT = this.SupportsLWTT;
+    Flight = flight;
+    
+    }
+
+    
+
     public double CalculateFees()
     {
         return Flight?.CalculateFees() ?? 0;
@@ -74,6 +87,12 @@ public class Airline
     public string Name { get; set; }
     public string Code { get; set; }
     public Dictionary<string, Flight> Flights { get; set; } = new Dictionary<string, Flight>();
+
+    public Airline(string Name, string Code)
+    {
+        Name = name;
+        Code= code;
+    }
 
     public bool AddFlight(Flight flight)
     {
