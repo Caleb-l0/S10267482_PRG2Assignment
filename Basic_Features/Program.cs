@@ -251,13 +251,28 @@ class Program
             string ExpectedDPAR = data[3];
             string RequestCode = data[4];
 
-            Flights().Add(new Flight { FlightNumber, Origin, Destination, ExpectedDPAR, RequestCode });
+            Flights().Add(new Flight { FlightNumber, Origin, Destination, ExpectedDPAR, RequestCode })
         }
     }
+
+    
 
     //3//
     void DisplayFlightInfo()
     {
+        Console.WriteLine("Flight Number      Origin      Destination      Expected Depature/Arrival    Request Code") // Add airline name and remove Request code//
+        foreach (var flights in Flights)
+        {
+            Console.Write(flights.ToString());
+        }
+    }
+
+
+    //4//
+
+    void ListBoardingGates()
+    {
+        Console.WriteLine("Boarding Gates    Special Request Codes      Flight Numbers   ");
 
     }
 
