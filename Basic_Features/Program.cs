@@ -234,7 +234,7 @@ class Program
             string CFFT = data[2];
             string LWTT = data[3];
 
-            BoardingGates().Add(new BoardingGate { BoardingGate, DDJB,CFFT, LWTT });
+            BoardingGates().Add(new BoardingGate { BoardingGate, DDJB, CFFT, LWTT });
         }
     }
 
@@ -255,7 +255,7 @@ class Program
         }
     }
 
-    
+
 
     //3//
     void DisplayFlightInfo()
@@ -273,6 +273,16 @@ class Program
     void ListBoardingGates()
     {
         Console.WriteLine("Boarding Gates    Special Request Codes      Flight Numbers   ");
+
+    }
+
+    //5//
+    void GateToFlight()
+    {
+        Console.WriteLine("Enter your flight number:");
+        string flightno = Console.ReadLine();
+
+
 
     }
 
