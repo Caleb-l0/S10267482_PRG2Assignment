@@ -1,49 +1,76 @@
-﻿class NORMFlight
+public class NORMFlight : Flight
 {
-    public double CalculateFees()
+    public override double CalculateFees()
     {
-
+        return ; 
     }
+
     public override string ToString()
     {
-        return base.ToString();
+        return base.ToString() + ", Type: NORMFlight";
     }
 }
 
-class LWTTFlight
+
+public class LWTTFlight : Flight
 {
     public double RequestFee { get; set; }
 
-    public LWTTFlight(double RequestFee)
+    public override double CalculateFees()
     {
-        RequestFee = this.RequestFee;
+        return RequestFee + ; 
     }
 
-
-
-}
-class DDJBFlight
-{
-    public double RequestFee { get; set; }
+    public override string ToString()
+    {
+        return base.ToString() + $", Type: LWTTFlight, Request Fee: {RequestFee}";
+    }
 }
 
-class CFFTFlight
+public class DDJBFlight : Flight
 {
     public double RequestFee { get; set; }
+
+    public override double CalculateFees()
+    {
+        return RequestFee + ; 
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() + $", Type: DDJBFlight, Request Fee: {RequestFee}";
+    }
+}
+
+
+public class CFFTFlight : Flight
+{
+    public double RequestFee { get; set; }
+
+    public override double CalculateFees()
+    {
+        return RequestFee + ;
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() + $", Type: CFFTFlight, Request Fee: {RequestFee}";
+    }
 }
 
 public abstract class Flight
 {
-    public string flightNumber {  get; set; }
-    public string origin { get; set; }
-    public string destination { get; set; }
-    public DateTime expectedTime { get; set; }
+    public string FlightNumber { get; set; }
+    public string Origin { get; set; }
+    public string Destination { get; set; }
+    public DateTime ExpectedTime { get; set; }
+    public string Status { get; set; }
 
-    public string status { get; set; }
+    public abstract double CalculateFees();
 
-    public Flight() 
-    { 
-
+    public override string ToString()
+    {
+        return $"Flight: {FlightNumber}, Origin: {Origin}, Destination: {Destination}, Status: {Status}";
     }
 }
 
