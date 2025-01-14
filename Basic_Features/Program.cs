@@ -162,7 +162,7 @@ public class LWTTFlight : Flight
 
     public override double CalculateFees()
     {
-        (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 500; 
+        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 500; 
     }
 
     public override string ToString()
@@ -177,7 +177,7 @@ public class DDJBFlight : Flight
 
     public override double CalculateFees()
     {
-        (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 300; 
+        return(Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 300; 
     }
 
     public override string ToString()
@@ -192,7 +192,7 @@ public class CFFTFlight : Flight
 
     public override double CalculateFees()
     {
-        (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 150;
+        return(Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 150;
     }
 
     public override string ToString()
