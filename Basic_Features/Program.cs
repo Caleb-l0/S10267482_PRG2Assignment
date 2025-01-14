@@ -22,7 +22,33 @@ class LWTTFlight
 
 
 }
-class Airline
+class DDJBFlight
+{
+    public double RequestFee { get; set; }
+}
+
+class CFFTFlight
+{
+    public double RequestFee { get; set; }
+}
+
+public abstract class Flight
+{
+    public string flightNumber {  get; set; }
+    public string origin { get; set; }
+    public string destination { get; set; }
+    public DateTime expectedTime { get; set; }
+
+    public string status { get; set; }
+
+    public Flight() 
+    { 
+
+    }
+}
+
+
+ class Airline : Flight
 {
     public string name { get; set; }
     public string code { get; set; }
