@@ -209,21 +209,47 @@ class Program
         return CalculateFees();
     }
 
+    void ReadAirlines()
+    {
+        string[] lines = File.ReadAllLines("airlines.csv");
+        for (int i = 1; i < lines.Length; i++)
+        {
+            string[] data = lines[i].Split(',');
+            string AirlineName = data[0];
+            string AirlineCode = data[1];
+        }
+    }
+
+    void ReadBoardingGates()
+    {
+        string[] lines = File.ReadAllLines("boardinggates.csv");
+        for (int i = 1; i < lines.Length; i++)
+        {
+            string[] data = lines[i].Split(",");
+            string BoardingGate = data[0];
+            string DDJB = data[1];
+            string CFFT = data[2];
+            string LWTT = data[3];
+        }
+    }
+
+
     public void DisplayMenu()
     {
-        Console.WriteLine("=============================================")
-        Console.WriteLine("Welcome to Changi Airport Terminal 5")
-        Console.WriteLine("=============================================")
+        Console.WriteLine("=============================================");
+        Console.WriteLine("Welcome to Changi Airport Terminal 5");
+        Console.WriteLine("=============================================");
 
-        Console.WriteLine("1. List All Flights")
-        Console.WriteLine("2. List Boarding Gates")
-        Console.WriteLine("3. Assign a Boarding Gate to a Flight")
-        Console.WriteLine("4. Create Flight")
-        Console.WriteLine("5. Display Airline Flights")
-        Console.WriteLine("6. Modify Flight Details")
-        Console.WriteLine("7. Display Flight Schedule")
-        Console.WriteLine("0. Exit")
-        
+        Console.WriteLine("1. List All Flights");
+        Console.WriteLine("2. List Boarding Gates");
+        Console.WriteLine("3. Assign a Boarding Gate to a Flight");
+        Console.WriteLine("4. Create Flight");
+        Console.WriteLine("5. Display Airline Flights");
+        Console.WriteLine("6. Modify Flight Details");
+        Console.WriteLine("7. Display Flight Schedule");
+        Console.WriteLine("0. Exit");
+
+
     }
     static void Main(string args[])
     {
