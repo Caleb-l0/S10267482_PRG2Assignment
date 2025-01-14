@@ -209,6 +209,7 @@ class Program
         return CalculateFees();
     }
 
+    //1//
     void ReadAirlines()
     {
         string[] lines = File.ReadAllLines("airlines.csv");
@@ -217,6 +218,8 @@ class Program
             string[] data = lines[i].Split(',');
             string AirlineName = data[0];
             string AirlineCode = data[1];
+
+            Airlines().Add(new Airline { AirlineName, AirlineCode });
         }
     }
 
@@ -230,7 +233,32 @@ class Program
             string DDJB = data[1];
             string CFFT = data[2];
             string LWTT = data[3];
+
+            BoardingGates().Add(new BoardingGate { BoardingGate, DDJB,CFFT, LWTT });
         }
+    }
+
+    //2//
+    void ReadFlights()
+    {
+        string[] lines = File.ReadAllLines("flights.csv");
+        for (int i = 1; i < lines.Length;, i++)
+        {
+            string[] data = lines[i].Split(",");
+            string FlightNumber = data[0];
+            string Origin = data[1];
+            string Destination = data[2];
+            string ExpectedDPAR = data[3];
+            string RequestCode = data[4];
+
+            Flights().Add(new Flight { FlightNumber, Origin, Destination, ExpectedDPAR, RequestCode });
+        }
+    }
+
+    //3//
+    void DisplayFlightInfo()
+    {
+
     }
 
 
