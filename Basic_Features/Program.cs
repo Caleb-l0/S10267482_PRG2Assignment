@@ -201,8 +201,12 @@ public class CFFTFlight : Flight
     }
 }
 
-class program
+class Program
 {
+    public void CalculateTotal()
+    {
+        return baseFee + CalculateFees();
+    }
     static void Main(string args[])
     {
 
