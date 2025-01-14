@@ -59,7 +59,9 @@ public abstract class Flight
     {
         this.name = name;
         this.code = code;
+
     }
 
 
 }
+//test//
