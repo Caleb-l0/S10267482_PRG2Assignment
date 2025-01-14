@@ -203,7 +203,7 @@ public class CFFTFlight : Flight
 
 class Program
 {
-    public void CalculateTotal()
+    public void CalculateTotalFee()
     {
         return baseFee + CalculateFees();
     }
