@@ -201,7 +201,16 @@ public class CFFTFlight : Flight
     }
 }
 
+class program
+{
+    static void Main(string args[])
+    {
 
+
+    }
+
+
+}
 
 
 
