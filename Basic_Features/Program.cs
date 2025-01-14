@@ -61,15 +61,15 @@ public class BoardingGate
 
     public BoardingGate(Flight flight)
     {
-    GateName = this.GateName;
-    SupportsCFFT = this.SupportsCFFT;
-    SupportsDDJB = this.SupportsDDJB;
-    SupportsLWTT = this.SupportsLWTT;
-    Flight = flight;
-    
+        GateName = this.GateName;
+        SupportsCFFT = this.SupportsCFFT;
+        SupportsDDJB = this.SupportsDDJB;
+        SupportsLWTT = this.SupportsLWTT;
+        Flight = flight;
+
     }
 
-    
+
 
     public double CalculateFees()
     {
@@ -92,7 +92,7 @@ public class Airline
     public Airline(string Name, string Code)
     {
         Name = name;
-        Code= code;
+        Code = code;
     }
 
     public bool AddFlight(Flight flight)
@@ -146,7 +146,7 @@ public class NORMFlight : Flight
 {
     public override double CalculateFees()
     {
-         return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee; //SG Destination = 500, else 800//
+        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee; //SG Destination = 500, else 800//
     }
 
     public override string ToString()
@@ -162,7 +162,7 @@ public class LWTTFlight : Flight
 
     public override double CalculateFees()
     {
-        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 500; 
+        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 500;
     }
 
     public override string ToString()
@@ -177,7 +177,7 @@ public class DDJBFlight : Flight
 
     public override double CalculateFees()
     {
-        return(Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 300; 
+        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 300;
     }
 
     public override string ToString()
@@ -192,7 +192,7 @@ public class CFFTFlight : Flight
 
     public override double CalculateFees()
     {
-        return(Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 150;
+        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee + 150;
     }
 
     public override string ToString()
@@ -208,6 +208,23 @@ class Program
         // for promotional condition (not done)//
         return CalculateFees();
     }
+
+    public void DisplayMenu()
+    {
+        Console.WriteLine("=============================================")
+        Console.WriteLine("Welcome to Changi Airport Terminal 5")
+        Console.WriteLine("=============================================")
+
+        Console.WriteLine("1. List All Flights")
+        Console.WriteLine("2. List Boarding Gates")
+        Console.WriteLine("3. Assign a Boarding Gate to a Flight")
+        Console.WriteLine("4. Create Flight")
+        Console.WriteLine("5. Display Airline Flights")
+        Console.WriteLine("6. Modify Flight Details")
+        Console.WriteLine("7. Display Flight Schedule")
+        Console.WriteLine("0. Exit")
+        
+    }
     static void Main(string args[])
     {
 
@@ -216,6 +233,3 @@ class Program
 
 
 }
-
-
-
