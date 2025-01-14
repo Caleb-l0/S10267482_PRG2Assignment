@@ -20,18 +20,19 @@ class LWTTFlight
     }
 
 
-    class Airline
+}
+class Airline
+{
+    public string name { get; set; }
+    public string code { get; set; }
+
+    public Dictionary<string, Flight> flights = new Dictionary<string, Flight>();
+
+    public Airline(string name, string code)
     {
-        public string name { get; set; }
-        public string code { get; set; }
-
-        public Dictionary<string, Flight> flights = new Dictionary<string, Flight>();
-
-        public Airline(string name, string code)
-        {
-            this.name = name;
-            this.code = code;
-        }
-
-
+        this.name = name;
+        this.code = code;
     }
+
+
+}
