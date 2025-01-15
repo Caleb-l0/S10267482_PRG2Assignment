@@ -285,7 +285,7 @@ class Program
     {
         Console.WriteLine("Enter your flight number:");
         string flightno = Console.ReadLine();
-           
+
 
 
 
@@ -296,7 +296,7 @@ class Program
     {
         while true
         {
-            
+
             Console.WriteLine("Enter Flight Number:");
             string flightNumber = Console.ReadLine();
 
@@ -309,7 +309,7 @@ class Program
             Console.WriteLine("Enter Expected Departure/Arrival Time (YYYY/MM/DD HH:MM):");
             string expectedTime = Console.ReadLine();
 
-            
+
             Console.WriteLine("Would you like to add a Special Request Code? [Y/N]");
             string requestCode = string.Empty;
 
@@ -320,6 +320,29 @@ class Program
             }
         }
     }
+
+    //7//
+    void DisplayAirlineDetails()
+    {
+        foreach (var airline in AirlineDetails) //idk what im doing//
+        {
+            Console.WriteLine(Airline.ToString());
+        }
+
+        Console.WriteLine("Enter the 2-Letter Airline Code");
+        string twolettercode = Console.ReadLine();
+
+        
+    }
+
+
+    //8//
+    void ModifyFlightDetails()
+    {
+
+    }
+
+
 
 
 
