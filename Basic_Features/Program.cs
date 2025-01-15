@@ -273,6 +273,10 @@ class Program
     void ListBoardingGates()
     {
         Console.WriteLine("Boarding Gates    Special Request Codes      Flight Numbers   ");
+        foreach (var gate in terminal.BoardingGates.Values)
+        {
+            Console.WriteLine(gate.ToString());
+        }
 
     }
 
@@ -281,10 +285,42 @@ class Program
     {
         Console.WriteLine("Enter your flight number:");
         string flightno = Console.ReadLine();
+           
 
 
 
     }
+
+    //6//
+    void CreateNewFlight(string flightno)
+    {
+        while true
+        {
+            
+            Console.WriteLine("Enter Flight Number:");
+            string flightNumber = Console.ReadLine();
+
+            Console.WriteLine("Enter Origin:");
+            string origin = Console.ReadLine();
+
+            Console.WriteLine("Enter Destination:");
+            string destination = Console.ReadLine();
+
+            Console.WriteLine("Enter Expected Departure/Arrival Time (YYYY/MM/DD HH:MM):");
+            string expectedTime = Console.ReadLine();
+
+            
+            Console.WriteLine("Would you like to add a Special Request Code? [Y/N]");
+            string requestCode = string.Empty;
+
+            if (Console.ReadLine().ToUpper() == "Y")
+            {
+                Console.WriteLine("Enter Special Request Code:");
+                requestCode = Console.ReadLine();
+            }
+        }
+
+
 
 
     public void DisplayMenu()
