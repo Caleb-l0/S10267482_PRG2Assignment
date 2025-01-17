@@ -266,7 +266,7 @@ class Program
         foreach (var flight in Flights.Values)
         {
             var airline = GetAirlineFromFlight(flight);
-            Console.WriteLine($"{flight.FlightNumber}      {airline?.Name}      {flight.Origin}      {flight.Destination}      {flight.ExpectedTime}");
+            Console.WriteLine($"{flight.FlightNumber}      {airline.Name}      {flight.Origin}      {flight.Destination}      {flight.ExpectedTime}");
         }
     }
 
@@ -406,7 +406,7 @@ class Program
                 }
 
                 
-                if (selectedFlight == BoardingGateFlight gateFlight && gateFlight.BoardingGate != null)
+                if (selectedFlight is BoardingGateFlight gateFlight && gateFlight.BoardingGate != null)
                 {
                     Console.WriteLine($"Boarding Gate: {gateFlight.BoardingGate.GateName}");
                 }
@@ -432,6 +432,50 @@ class Program
     //8//
     void ModifyFlightDetails()
     {
+        Console.WriteLine("Enter the Flight Number you want to modify:");
+        string flightNumber = Console.ReadLine();
+
+
+        foreach (var airline in Airlines.Values)
+        {
+            if (airline.Flights.ContainsKey(flightNumber))
+            {
+                flightToModify = airline.Flights[flightNumber];
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Flight not found!");
+                return;
+            }
+        }
+        Console.WriteLine("1) Choose an existing flight to modify");
+        Console.WriteLine("2) Choose an existing flight to delete");
+        string option = Console.ReadLine();
+
+        if option ==1 {
+            Console.WriteLine("What would you like to modify?");
+            Console.WriteLine("1. Origin");
+            Console.WriteLine("2. Destination");
+            Console.WriteLine("3. Expected Departure/Arrival Time");
+            Console.WriteLine("4. Special Request Code");
+
+            switch (choice)
+            {
+                case "1":
+                    
+                    Console.WriteLine("Enter new Origin:");
+                    flightToModify.Origin = Console.ReadLine();
+                    break;
+
+                case "2":
+                    
+                    Console.WriteLine("Enter new Destination:");
+                    flightToModify.Destination = Console.ReadLine();
+                    break;
+
+                case "3":
+            }
 
     }
 
