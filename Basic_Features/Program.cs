@@ -311,7 +311,7 @@ class Program
     //6//
     void CreateNewFlight(string flightno) 
     {
-        while true
+        while (true)
         {
 
             Console.WriteLine("Enter Flight Number:");
