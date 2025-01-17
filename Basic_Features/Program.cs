@@ -482,12 +482,13 @@ class Program
             case "3":
                 Console.WriteLine("Enter new Expected Departure/Arrival Time (YYYY/MM/DD HH:MM):");
                 string newTimeInput = Console.ReadLine();
-                if (DateTime.TryParse(newTimeInput, out DateTime newTime))
+                try
                 {
+                    DateTime newTime = DateTime.Parse(newTimeInput); // Using DateTime.Parse
                     flightToModify.ExpectedTime = newTime;
                     Console.WriteLine("Expected Departure/Arrival Time updated successfully.");
                 }
-                else
+                catch (FormatException)
                 {
                     Console.WriteLine("Invalid date format.");
                 }
