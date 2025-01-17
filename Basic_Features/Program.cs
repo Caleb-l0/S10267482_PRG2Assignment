@@ -475,6 +475,7 @@ class Program
                     break;
 
                 case "3":
+                    Console.WriteLine("Enter new Expected Departure/Arrival Time (YYYY/MM/DD HH:MM):");
             }
 
     }
