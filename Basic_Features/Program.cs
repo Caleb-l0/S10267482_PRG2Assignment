@@ -309,54 +309,62 @@ class Program
 
 
     //6//
-    void CreateNewFlight(string flightno) 
+void CreateNewFlight(string flightno)
+{
+    while (true)
     {
-        while (true)
+        Console.WriteLine("Enter Flight Number:");
+        string flightNumber = Console.ReadLine();
+
+        Console.WriteLine("Enter Origin:");
+        string origin = Console.ReadLine();
+
+        Console.WriteLine("Enter Destination:");
+        string destination = Console.ReadLine();
+
+        Console.WriteLine("Enter Expected Departure/Arrival Time (YYYY/MM/DD HH:MM):");
+        string expectedTime = Console.ReadLine();
+
+        DateTime expectedDateTime;
+        if (!DateTime.TryParse(expectedTime, out expectedDateTime))
         {
+            Console.WriteLine("Invalid date format. Please enter the time in the correct format.");
+            continue;
+        }
 
-            Console.WriteLine("Enter Flight Number:");
-            string flightNumber = Console.ReadLine();
+        string formattedTime = expectedDateTime.ToString("d/M/yyyy h:mm tt");
 
-            Console.WriteLine("Enter Origin:");
-            string origin = Console.ReadLine();
+        Console.WriteLine("Would you like to add a Special Request Code? [Y/N]");
+        string requestCode = string.Empty;
 
-            Console.WriteLine("Enter Destination:");
-            string destination = Console.ReadLine();
+        if (Console.ReadLine().ToUpper() == "Y")
+        {
+            Console.WriteLine("Enter Special Request Code:");
+            requestCode = Console.ReadLine();
+        }
 
-            Console.WriteLine("Enter Expected Departure/Arrival Time (YYYY/MM/DD HH:MM):");
-            string expectedTime = Console.ReadLine();
+        Flight newFlight = new Flight
+        {
+            FlightNumber = flightNumber,
+            Origin = origin,
+            Destination = destination,
+            ExpectedTime = formattedTime,  
+            RequestCode = requestCode
+        };
 
-
-            Console.WriteLine("Would you like to add a Special Request Code? [Y/N]");
-            string requestCode = string.Empty;
-
-            if (Console.ReadLine().ToUpper() == "Y")
-            {
-                Console.WriteLine("Enter Special Request Code:");
-                requestCode = Console.ReadLine();
-            }
-
-            Flight newFlight = new Flight
-            {
-                FlightNumber = flightNumber,
-                Origin = origin,
-                Destination = destination,
-                ExpectedTime = expectedTime,
-                RequestCode = requestCode
-            }
-
-            if (Airlines.ContainsKey(flightno))
-            {
-                Airline selectedAirline = Airlines[flightno];
-                selectedAirline.AddFlight(newFlight);
-                Console.WriteLine($"Flight {flightNumber} from {origin} to {destination} has been successfully created and added.");
-            }
-            else
-            {
-                Console.WriteLine("Invalid Airline Code entered. Flight was not created.");
-            }
+        if (Airlines.ContainsKey(flightno))
+        {
+            Airline selectedAirline = Airlines[flightno];
+            selectedAirline.AddFlight(newFlight);
+            Console.WriteLine($"Flight {flightNumber} from {origin} to {destination} has been successfully created and added.");
+        }
+        else
+        {
+            Console.WriteLine("Invalid Airline Code entered. Flight was not created.");
         }
     }
+}
+
 
     //7//
     void DisplayAirlineDetails()
