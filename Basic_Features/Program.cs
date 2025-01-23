@@ -241,38 +241,38 @@ class Program
 
 
     //2//
-void ReadFlights()
-{
-    string[] lines = File.ReadAllLines("flights.csv");
-    for (int i = 1; i < lines.Length; i++)
+    void ReadFlights()
     {
-        string[] data = lines[i].Split(",");
-        string flightNumber = data[0];
-        string origin = data[1];
-        string destination = data[2];
-        string expectedTime = data[3];
-        string requestCode = data[4];
-
-        DateTime expectedDateTime;
-        if (!DateTime.TryParse(expectedTime, out expectedDateTime))
+        string[] lines = File.ReadAllLines("flights.csv");
+        for (int i = 1; i < lines.Length; i++)
         {
-            Console.WriteLine($"Invalid time format for flight {flightNumber}. Skipping this flight.");
-            continue;  
+            string[] data = lines[i].Split(",");
+            string flightNumber = data[0];
+            string origin = data[1];
+            string destination = data[2];
+            string expectedTime = data[3];
+            string requestCode = data[4];
+    
+            DateTime expectedDateTime;
+            if (!DateTime.TryParse(expectedTime, out expectedDateTime))
+            {
+                Console.WriteLine($"Invalid time format for flight {flightNumber}. Skipping this flight.");
+                continue;  
+            }
+    
+            Flight flight = new NORMFlight
+            {
+                FlightNumber = flightNumber,
+                Origin = origin,
+                Destination = destination,
+                ExpectedTime = expectedDateTime,
+                Status = "Scheduled",
+                RequestCode = requestCode
+            };
+    
+            Flights.Add(flightNumber, flight); 
         }
-
-        Flight flight = new NORMFlight
-        {
-            FlightNumber = flightNumber,
-            Origin = origin,
-            Destination = destination,
-            ExpectedTime = expectedDateTime,
-            Status = "Scheduled",
-            RequestCode = requestCode
-        };
-
-        Flights.Add(flightNumber, flight); 
     }
-}
 
 
 
