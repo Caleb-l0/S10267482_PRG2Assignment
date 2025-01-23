@@ -281,12 +281,15 @@ void ReadFlights()
     void DisplayFlightInfo()
     {
         Console.WriteLine("Flight Number      Airline Name      Origin      Destination      Expected Departure/Arrival");
-        foreach (var flight in Flights.Values)
+        foreach (var airline in Airlines.Values)
         {
-            var airline = GetAirlineFromFlight(flight);
-            Console.WriteLine($"{flight.FlightNumber}      {airline.Name}      {flight.Origin}      {flight.Destination}      {flight.ExpectedTime}");
+            foreach (var flight in airline.Flights.Values)
+            {
+                Console.WriteLine($"{flight.FlightNumber}      {airline.Name}      {flight.Origin}      {flight.Destination}      {flight.ExpectedTime}");
+            }
         }
     }
+
 
 
     //4//
