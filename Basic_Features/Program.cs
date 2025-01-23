@@ -241,21 +241,39 @@ class Program
 
 
     //2//
-    void ReadFlights()
+void ReadFlights()
+{
+    string[] lines = File.ReadAllLines("flights.csv");
+    for (int i = 1; i < lines.Length; i++)
     {
-        string[] lines = File.ReadAllLines("flights.csv");
-        for (int i = 1; i < lines.Length;, i++)
-        {
-            string[] data = lines[i].Split(",");
-            string FlightNumber = data[0];
-            string Origin = data[1];
-            string Destination = data[2];
-            string ExpectedDPAR = data[3];
-            string RequestCode = data[4];
+        string[] data = lines[i].Split(",");
+        string flightNumber = data[0];
+        string origin = data[1];
+        string destination = data[2];
+        string expectedTime = data[3];
+        string requestCode = data[4];
 
-            Flights().Add(new Flight { FlightNumber, Origin, Destination, ExpectedDPAR, RequestCode });
+        DateTime expectedDateTime;
+        if (!DateTime.TryParse(expectedTime, out expectedDateTime))
+        {
+            Console.WriteLine($"Invalid time format for flight {flightNumber}. Skipping this flight.");
+            continue;  
         }
+
+        Flight flight = new NORMFlight
+        {
+            FlightNumber = flightNumber,
+            Origin = origin,
+            Destination = destination,
+            ExpectedTime = expectedDateTime,
+            Status = "Scheduled",
+            RequestCode = requestCode
+        };
+
+        Flights.Add(flightNumber, flight); 
     }
+}
+
 
 
 
