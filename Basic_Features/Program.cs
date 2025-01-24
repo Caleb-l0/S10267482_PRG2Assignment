@@ -30,15 +30,21 @@ public class Terminal
         return false;
     }
 
-    public Airline GetAirlineFromFlight(Flight flight)
+public Airline GetAirlineFromFlight(Flight flight)
+{
+    if (flight == null)
     {
-        foreach (var airline in Airlines.Values)
-        {
-            if (airline.Flights.ContainsKey(flight.FlightNumber))
-                return airline;
-        }
+        Console.WriteLine("Flight not provided.");
         return null;
     }
+
+    foreach (var airline in Airlines.Values)
+    {
+        if (airline.Flights.ContainsKey(flight.FlightNumber))
+            return airline;
+    }
+    return null;
+}
 
     public void PrintAirlineFees()
     {
@@ -298,39 +304,46 @@ class Program
             Console.WriteLine(gate.ToString());
         }
     }
+    
 void AssignGateToFlight()
+{
+    try
     {
-        try
-        {
-            Console.WriteLine("Enter Flight Number:");
-            string flightNumber = Console.ReadLine();
+        Console.WriteLine("Enter Flight Number:");
+        string flightNumber = Console.ReadLine();
 
-            if (!terminal.Flights.ContainsKey(flightNumber))
+        if (!terminal.Flights.ContainsKey(flightNumber))
+        {
+            Console.WriteLine("Flight not found!");
+            return;
+        }
+
+        Console.WriteLine("Enter Boarding Gate:");
+        string gateName = Console.ReadLine();
+
+        if (terminal.BoardingGates.ContainsKey(gateName))
+        {
+            BoardingGate gate = terminal.BoardingGates[gateName];
+
+            if (gate.Flight != null)
             {
-                Console.WriteLine("Flight not found!");
+                Console.WriteLine($"Gate {gateName} is already assigned to Flight {gate.Flight.FlightNumber}. Unassign it first to assign a new flight.");
                 return;
             }
 
-            Console.WriteLine("Enter Boarding Gate:");
-            string gateName = Console.ReadLine();
-
-            if (terminal.BoardingGates.ContainsKey(gateName))
-            {
-                terminal.BoardingGates[gateName].Flight = terminal.Flights[flightNumber];
-                Console.WriteLine($"Flight {flightNumber} assigned to Gate {gateName}");
-            }
-            else
-            {
-                Console.WriteLine("Boarding Gate not found.");
-            }
+            gate.Flight = terminal.Flights[flightNumber];
+            Console.WriteLine($"Flight {flightNumber} assigned to Gate {gateName}");
         }
-        catch (Exception ex)
+        else
         {
-            Console.WriteLine("An error occurred while assigning a gate to the flight. " + ex.Message);
+            Console.WriteLine("Boarding Gate not found.");
         }
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine("An error occurred while assigning a gate to the flight. " + ex.Message);
+    }
     
-   
     void CreateFlight()
     {
         try
