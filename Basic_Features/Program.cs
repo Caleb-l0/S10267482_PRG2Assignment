@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
 public class Terminal
 {
     public string TerminalName { get; set; }
@@ -58,7 +62,6 @@ public class BoardingGate
     public bool SupportsLWTT { get; set; }
     public Flight Flight { get; set; }
 
-
     public BoardingGate(string gateName, bool supportsCFFT, bool supportsDDJB, bool supportsLWTT)
     {
         GateName = gateName;
@@ -66,8 +69,6 @@ public class BoardingGate
         SupportsDDJB = supportsDDJB;
         SupportsLWTT = supportsLWTT;
     }
-
-
 
     public double CalculateFees()
     {
@@ -87,10 +88,10 @@ public class Airline
     public string Code { get; set; }
     public Dictionary<string, Flight> Flights { get; set; } = new Dictionary<string, Flight>();
 
-    public Airline(string Name, string Code)
+    public Airline(string name, string code)
     {
-        this.Name = Name;
-        this.Code = Code;
+        Name = name;
+        Code = code;
     }
 
     public bool AddFlight(Flight flight)
@@ -126,6 +127,8 @@ public class Airline
 
 public abstract class Flight
 {
+    protected double baseFee = 100.0; // Default base fee
+
     public string FlightNumber { get; set; }
     public string Origin { get; set; }
     public string Destination { get; set; }
@@ -144,7 +147,7 @@ public class NORMFlight : Flight
 {
     public override double CalculateFees()
     {
-        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee; //SG Destination = 500, else 800//
+        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee; //SG Destination = 500, else 800
     }
 
     public override string ToString()
@@ -152,7 +155,6 @@ public class NORMFlight : Flight
         return base.ToString() + ", Type: NORMFlight";
     }
 }
-
 
 public class LWTTFlight : Flight
 {
