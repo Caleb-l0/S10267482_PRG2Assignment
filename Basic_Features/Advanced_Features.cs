@@ -5,7 +5,11 @@ class program
     Queue<Flight> unassignedFlights = new Queue<Flight>();
     foreach (var flight in Terminal.Flights.Values)
     {
-      if (flight != flights.)
+      if (flight != Flights.ContainsKey)
+      {
+        
+        
+      }
     }
     
   }
