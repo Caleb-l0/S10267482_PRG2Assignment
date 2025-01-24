@@ -30,21 +30,15 @@ public class Terminal
         return false;
     }
 
-public Airline GetAirlineFromFlight(Flight flight)
-{
-    if (flight == null)
+    public Airline GetAirlineFromFlight(Flight flight)
     {
-        Console.WriteLine("Flight not provided.");
+        foreach (var airline in Airlines.Values)
+        {
+            if (airline.Flights.ContainsKey(flight.FlightNumber))
+                return airline;
+        }
         return null;
     }
-
-    foreach (var airline in Airlines.Values)
-    {
-        if (airline.Flights.ContainsKey(flight.FlightNumber))
-            return airline;
-    }
-    return null;
-}
 
     public void PrintAirlineFees()
     {
@@ -211,6 +205,16 @@ class Program
 {
     private Terminal terminal = new Terminal();
 
+    public void CalculateTotalFee()
+    {
+        double totalFees = 0;
+        foreach (var flight in terminal.Flights.Values)
+        {
+            totalFees += flight.CalculateFees();
+        }
+        Console.WriteLine($"Total Fees: {totalFees}");
+    }
+
     void ReadAirlines()
     {
         try
@@ -219,31 +223,18 @@ class Program
             for (int i = 1; i < lines.Length; i++)
             {
                 string[] data = lines[i].Split(',');
-                if (data.Length < 2)
-                {
-                    Console.WriteLine($"Skipping invalid line: {lines[i]}");
-                    continue;
-                }
-
                 string airlineName = data[0];
                 string airlineCode = data[1];
 
                 Airline airline = new Airline(airlineName, airlineCode);
-                if (!terminal.AddAirline(airline))
-                {
-                    Console.WriteLine($"Airline {airlineName} already exists. Skipping...");
-                }
+                terminal.AddAirline(airline);
             }
-        }
-        catch (FileNotFoundException ex)
-        {
-            Console.WriteLine("Error: Airlines file not found. " + ex.Message);
         }
         catch (Exception ex)
         {
-            Console.WriteLine("An error occurred while reading airlines. " + ex.Message);
+            Console.WriteLine($"Error reading airlines file: {ex.Message}");
         }
-    }    
+    }
 
     void ReadBoardingGates()
     {
@@ -253,34 +244,20 @@ class Program
             for (int i = 1; i < lines.Length; i++)
             {
                 string[] data = lines[i].Split(',');
-                if (data.Length < 4)
-                {
-                    Console.WriteLine($"Skipping invalid line: {lines[i]}");
-                    continue;
-                }
-
                 string gateName = data[0];
-                bool supportsDDJB = data[1].Equals("True", StringComparison.OrdinalIgnoreCase);
-                bool supportsCFFT = data[2].Equals("True", StringComparison.OrdinalIgnoreCase);
-                bool supportsLWTT = data[3].Equals("True", StringComparison.OrdinalIgnoreCase);
+                bool supportsDDJB = data[1] == "True";
+                bool supportsCFFT = data[2] == "True";
+                bool supportsLWTT = data[3] == "True";
 
                 BoardingGate gate = new BoardingGate(gateName, supportsCFFT, supportsDDJB, supportsLWTT);
-                if (!terminal.AddBoardingGate(gate))
-                {
-                    Console.WriteLine($"Boarding gate {gateName} already exists. Skipping...");
-                }
+                terminal.AddBoardingGate(gate);
             }
-        }
-        catch (FileNotFoundException ex)
-        {
-            Console.WriteLine("Error: Boarding gates file not found. " + ex.Message);
         }
         catch (Exception ex)
         {
-            Console.WriteLine("An error occurred while reading boarding gates. " + ex.Message);
+            Console.WriteLine($"Error reading boarding gates file: {ex.Message}");
         }
     }
-
 
 
     void DisplayAirlinesFlights()
@@ -304,58 +281,46 @@ class Program
             Console.WriteLine(gate.ToString());
         }
     }
-    
-void AssignGateToFlight()
-{
-    try
-    {
-        Console.WriteLine("Enter Flight Number:");
-        string flightNumber = Console.ReadLine();
 
-        if (!terminal.Flights.ContainsKey(flightNumber))
-        {
-            Console.WriteLine("Flight not found!");
-            return;
-        }
-
-        Console.WriteLine("Enter Boarding Gate:");
-        string gateName = Console.ReadLine();
-
-        if (terminal.BoardingGates.ContainsKey(gateName))
-        {
-            BoardingGate gate = terminal.BoardingGates[gateName];
-
-            if (gate.Flight != null)
-            {
-                Console.WriteLine($"Gate {gateName} is already assigned to Flight {gate.Flight.FlightNumber}. Unassign it first to assign a new flight.");
-                return;
-            }
-
-            gate.Flight = terminal.Flights[flightNumber];
-            Console.WriteLine($"Flight {flightNumber} assigned to Gate {gateName}");
-        }
-        else
-        {
-            Console.WriteLine("Boarding Gate not found.");
-        }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("An error occurred while assigning a gate to the flight. " + ex.Message);
-    }
-    
-    void CreateFlight()
+    void AssignGateToFlight()
     {
         try
         {
             Console.WriteLine("Enter Flight Number:");
             string flightNumber = Console.ReadLine();
 
-            if (terminal.Flights.ContainsKey(flightNumber))
+            if (!terminal.Flights.ContainsKey(flightNumber))
             {
-                Console.WriteLine("Flight already exists!");
+                Console.WriteLine("Flight not found!");
                 return;
             }
+
+            Console.WriteLine("Enter Boarding Gate:");
+            string gateName = Console.ReadLine();
+
+            if (terminal.BoardingGates.ContainsKey(gateName))
+            {
+                terminal.BoardingGates[gateName].Flight = terminal.Flights[flightNumber];
+                Console.WriteLine($"Flight {flightNumber} assigned to Gate {gateName}");
+            }
+            else
+            {
+                Console.WriteLine("Boarding Gate not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while assigning gate: {ex.Message}");
+        }
+    }
+
+
+    void CreateFlight()
+    {
+        try
+        {
+            Console.WriteLine("Enter Flight Number:");
+            string flightNumber = Console.ReadLine();
 
             Console.WriteLine("Enter Origin:");
             string origin = Console.ReadLine();
@@ -366,7 +331,8 @@ void AssignGateToFlight()
             Console.WriteLine("Enter Expected Departure/Arrival Time (YYYY/MM/DD HH:MM):");
             string expectedTime = Console.ReadLine();
 
-            if (!DateTime.TryParse(expectedTime, out DateTime expectedDateTime))
+            DateTime expectedDateTime;
+            if (!DateTime.TryParse(expectedTime, out expectedDateTime))
             {
                 Console.WriteLine("Invalid date format. Please enter the time in the correct format.");
                 return;
@@ -381,7 +347,7 @@ void AssignGateToFlight()
                 Status = "Scheduled"
             };
 
-            terminal.Flights[flightNumber] = newFlight;
+            terminal.Flights.Add(flightNumber, newFlight);
 
             Console.WriteLine("Enter Airline Code to associate with this flight:");
             string airlineCode = Console.ReadLine().ToUpper();
@@ -398,10 +364,11 @@ void AssignGateToFlight()
         }
         catch (Exception ex)
         {
-            Console.WriteLine("An error occurred while creating the flight. " + ex.Message);
+            Console.WriteLine($"An error occurred while creating the flight: {ex.Message}");
         }
     }
-    
+
+
     void ModifyFlightDetails()
     {
         Console.WriteLine("Enter Flight Number to modify:");
@@ -448,42 +415,44 @@ void AssignGateToFlight()
         Console.Write("Choose an option: ");
     }
 
-   public void Run()
+    static void Main(string[] args)
     {
+        Program program = new Program();
         try
         {
-            ReadAirlines();
-            ReadBoardingGates();
+            program.ReadAirlines();
+            program.ReadBoardingGates();
 
             while (true)
             {
-                DisplayMenu();
-                if (int.TryParse(Console.ReadLine(), out int choice))
+                program.DisplayMenu();
+                try
                 {
-                    try
+                    int choice;
+                    if (int.TryParse(Console.ReadLine(), out choice))
                     {
                         switch (choice)
                         {
                             case 1:
-                                DisplayAirlinesFlights();
+                                program.DisplayAirlinesFlights();
                                 break;
                             case 2:
-                                ListBoardingGates();
+                                program.ListBoardingGates();
                                 break;
                             case 3:
-                                AssignGateToFlight();
+                                program.AssignGateToFlight();
                                 break;
                             case 4:
-                                CreateFlight();
+                                program.CreateFlight();
                                 break;
                             case 5:
-                                DisplayAirlinesFlights();
+                                program.DisplayAirlinesFlights();
                                 break;
                             case 6:
-                                ModifyFlightDetails();
+                                program.ModifyFlightDetails();
                                 break;
                             case 7:
-                                DisplayFlightSchedule();
+                                program.DisplayFlightSchedule();
                                 break;
                             case 0:
                                 Console.WriteLine("Exiting...");
@@ -493,50 +462,20 @@ void AssignGateToFlight()
                                 break;
                         }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Console.WriteLine("An error occurred while processing your request. " + ex.Message);
+                        Console.WriteLine("Invalid input, please enter a valid option.");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Invalid input, please enter a valid option.");
+                    Console.WriteLine($"An error occurred while processing your request: {ex.Message}");
                 }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine("An unexpected error occurred. " + ex.Message);
+            Console.WriteLine($"An error occurred during initialization: {ex.Message}");
         }
     }
-
-    static void Main(string[] args)
-    {
-        Program program = new Program();
-        program.Run();
-    }
 }
-
-    //9//
-  void FlightsInOrder()
-{
-    List<Flight> allFlights = new List<Flight>();
-    
-    foreach (var airline in terminal.Airlines.Values)
-    {
-        foreach (var flight in airline.Flights.Values)
-        {
-            allFlights.Add(flight);
-        }
-    }
-
-    allFlights.Sort((f1, f2) => f1.ExpectedTime.CompareTo(f2.ExpectedTime));
-
-    Console.WriteLine("Flights sorted by Expected Departure/Arrival Time:");
-    foreach (var flight in allFlights)
-    {
-        Console.WriteLine($"{flight.FlightNumber} - {flight.Origin} to {flight.Destination} - {flight.ExpectedTime}");
-    }
-}
-
-
