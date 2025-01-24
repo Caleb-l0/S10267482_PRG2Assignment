@@ -5,7 +5,6 @@
 //==========================================================//
 
 
-
 public class Terminal
 {
     public string TerminalName { get; set; }
@@ -66,7 +65,6 @@ public class BoardingGate
     public bool SupportsLWTT { get; set; }
     public Flight Flight { get; set; }
 
-
     public BoardingGate(string gateName, bool supportsCFFT, bool supportsDDJB, bool supportsLWTT)
     {
         GateName = gateName;
@@ -74,8 +72,6 @@ public class BoardingGate
         SupportsDDJB = supportsDDJB;
         SupportsLWTT = supportsLWTT;
     }
-
-
 
     public double CalculateFees()
     {
@@ -95,12 +91,12 @@ public class Airline
     public string Code { get; set; }
     public Dictionary<string, Flight> Flights { get; set; } = new Dictionary<string, Flight>();
 
-    public Airline(string Name, string Code)
+    public Airline(string name, string code)
     {
-        this.Name = Name;
-        this.Code = Code;
+        Name = name;
+        Code = code;
     }
-
+    
     public bool AddFlight(Flight flight)
     {
         if (!Flights.ContainsKey(flight.FlightNumber))
