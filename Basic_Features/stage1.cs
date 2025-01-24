@@ -4,6 +4,9 @@
 // Partner Name : Winston Chin//
 //==========================================================//
 
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 public class Terminal
 {
@@ -96,7 +99,7 @@ public class Airline
         Name = name;
         Code = code;
     }
-    
+
     public bool AddFlight(Flight flight)
     {
         if (!Flights.ContainsKey(flight.FlightNumber))
@@ -130,6 +133,8 @@ public class Airline
 
 public abstract class Flight
 {
+    protected double baseFee = 100.0; // Default base fee
+
     public string FlightNumber { get; set; }
     public string Origin { get; set; }
     public string Destination { get; set; }
@@ -148,7 +153,7 @@ public class NORMFlight : Flight
 {
     public override double CalculateFees()
     {
-        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee; //SG Destination = 500, else 800//
+        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee; //SG Destination = 500, else 800
     }
 
     public override string ToString()
@@ -156,7 +161,6 @@ public class NORMFlight : Flight
         return base.ToString() + ", Type: NORMFlight";
     }
 }
-
 
 public class LWTTFlight : Flight
 {
@@ -205,13 +209,18 @@ public class CFFTFlight : Flight
 
 class Program
 {
+    private Terminal terminal = new Terminal();
+
     public void CalculateTotalFee()
     {
-        // for promotional condition (not done)//
-        return CalculateFees();
+        double totalFees = 0;
+        foreach (var flight in terminal.Flights.Values)
+        {
+            totalFees += flight.CalculateFees();
+        }
+        Console.WriteLine($"Total Fees: {totalFees}");
     }
 
-    //1//
     void ReadAirlines()
     {
         string[] lines = File.ReadAllLines("airlines.csv");
@@ -222,10 +231,9 @@ class Program
             string airlineCode = data[1];
 
             Airline airline = new Airline(airlineName, airlineCode);
-            Airlines.Add(airlineCode, airline);
+            terminal.AddAirline(airline);
         }
     }
-
 
     void ReadBoardingGates()
     {
@@ -239,14 +247,9 @@ class Program
             bool supportsLWTT = data[3] == "True";
 
             BoardingGate gate = new BoardingGate(gateName, supportsCFFT, supportsDDJB, supportsLWTT);
-            BoardingGates.Add(gateName, gate);
+            terminal.AddBoardingGate(gate);
         }
     }
-
-
-
-
-
 
     public void DisplayMenu()
     {
@@ -268,8 +271,5 @@ class Program
     {
         Program program = new Program();
         program.DisplayMenu();
-        
     }
-
-
-}   
+}
