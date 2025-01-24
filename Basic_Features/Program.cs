@@ -505,11 +505,11 @@ void AssignGateToFlight()
 }
 
     //9//
-    void FlightsInOrder()
+  void FlightsInOrder()
 {
-    
     List<Flight> allFlights = new List<Flight>();
-    foreach (var airline in Airlines.Values)
+    
+    foreach (var airline in terminal.Airlines.Values)
     {
         foreach (var flight in airline.Flights.Values)
         {
@@ -517,10 +517,8 @@ void AssignGateToFlight()
         }
     }
 
-    
     allFlights.Sort((f1, f2) => f1.ExpectedTime.CompareTo(f2.ExpectedTime));
 
-    
     Console.WriteLine("Flights sorted by Expected Departure/Arrival Time:");
     foreach (var flight in allFlights)
     {
