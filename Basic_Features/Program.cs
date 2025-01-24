@@ -210,74 +210,124 @@ class Program
     }
 
     //1//
-    void ReadAirlines()
+    public void ReadAirlines()
     {
-        string[] lines = File.ReadAllLines("airlines.csv");
-        for (int i = 1; i < lines.Length; i++)
+        try
         {
-            string[] data = lines[i].Split(',');
-            string airlineName = data[0];
-            string airlineCode = data[1];
+            string[] lines = File.ReadAllLines("airlines.csv");
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string[] data = lines[i].Split(',');
+                if (data.Length < 2)
+                {
+                    Console.WriteLine($"Invalid data at line {i + 1}. Skipping.");
+                    continue;
+                }
 
-            Airline airline = new Airline(airlineName, airlineCode);
-            Airlines.Add(airlineCode, airline);
+                string airlineName = data[0];
+                string airlineCode = data[1];
+
+                Airline airline = new Airline(airlineName, airlineCode);
+                Airlines.Add(airlineCode, airline);
+            }
+        }
+        catch (FileNotFoundException ex)
+        {
+            Console.WriteLine("Error: airlines.csv file not found.");
+            Console.WriteLine(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred while reading airlines.");
+            Console.WriteLine(ex.Message);
         }
     }
 
-
-    void ReadBoardingGates()
+    public void ReadBoardingGates()
     {
-        string[] lines = File.ReadAllLines("boardinggates.csv");
-        for (int i = 1; i < lines.Length; i++)
+        try
         {
-            string[] data = lines[i].Split(',');
-            string gateName = data[0];
-            bool supportsDDJB = data[1] == "True";
-            bool supportsCFFT = data[2] == "True";
-            bool supportsLWTT = data[3] == "True";
+            string[] lines = File.ReadAllLines("boardinggates.csv");
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string[] data = lines[i].Split(',');
+                if (data.Length < 4)
+                {
+                    Console.WriteLine($"Invalid data at line {i + 1}. Skipping.");
+                    continue;
+                }
 
-            BoardingGate gate = new BoardingGate(gateName, supportsCFFT, supportsDDJB, supportsLWTT);
-            BoardingGates.Add(gateName, gate);
+                string gateName = data[0];
+                bool supportsDDJB = bool.TryParse(data[1], out bool ddjb) ? ddjb : false;
+                bool supportsCFFT = bool.TryParse(data[2], out bool cfft) ? cfft : false;
+                bool supportsLWTT = bool.TryParse(data[3], out bool lwtt) ? lwtt : false;
+
+                BoardingGate gate = new BoardingGate(gateName, supportsCFFT, supportsDDJB, supportsLWTT);
+                BoardingGates.Add(gateName, gate);
+            }
+        }
+        catch (FileNotFoundException ex)
+        {
+            Console.WriteLine("Error: boardinggates.csv file not found.");
+            Console.WriteLine(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred while reading boarding gates.");
+            Console.WriteLine(ex.Message);
         }
     }
-
 
     //2//
-    void ReadFlights()
+public void ReadFlights()
     {
-        string[] lines = File.ReadAllLines("flights.csv");
-        for (int i = 1; i < lines.Length; i++)
+        try
         {
-            string[] data = lines[i].Split(",");
-            string flightNumber = data[0];
-            string origin = data[1];
-            string destination = data[2];
-            string expectedTime = data[3];
-            string requestCode = data[4];
-    
-            DateTime expectedDateTime;
-            if (!DateTime.TryParse(expectedTime, out expectedDateTime))
+            string[] lines = File.ReadAllLines("flights.csv");
+            for (int i = 1; i < lines.Length; i++)
             {
-                Console.WriteLine($"Invalid time format for flight {flightNumber}. Skipping this flight.");
-                continue;  
+                string[] data = lines[i].Split(',');
+                if (data.Length < 5)
+                {
+                    Console.WriteLine($"Invalid data at line {i + 1}. Skipping.");
+                    continue;
+                }
+
+                string flightNumber = data[0];
+                string origin = data[1];
+                string destination = data[2];
+                string expectedTime = data[3];
+                string requestCode = data[4];
+
+                if (!DateTime.TryParse(expectedTime, out DateTime expectedDateTime))
+                {
+                    Console.WriteLine($"Invalid time format for flight {flightNumber}. Skipping.");
+                    continue;
+                }
+
+                Flight flight = new NORMFlight
+                {
+                    FlightNumber = flightNumber,
+                    Origin = origin,
+                    Destination = destination,
+                    ExpectedTime = expectedDateTime,
+                    Status = "Scheduled"
+                };
+
+                Flights.Add(flightNumber, flight);
             }
-    
-            Flight flight = new NORMFlight
-            {
-                FlightNumber = flightNumber,
-                Origin = origin,
-                Destination = destination,
-                ExpectedTime = expectedDateTime,
-                Status = "Scheduled",
-                RequestCode = requestCode
-            };
-    
-            Flights.Add(flightNumber, flight); 
+        }
+        catch (FileNotFoundException ex)
+        {
+            Console.WriteLine("Error: flights.csv file not found.");
+            Console.WriteLine(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred while reading flights.");
+            Console.WriteLine(ex.Message);
         }
     }
-
-
-
 
     //3//
     void DisplayFlightInfo()
@@ -332,62 +382,54 @@ class Program
 
 
     //6//
-void CreateNewFlight(string flightno)
-{
-    while (true)
+   public void CreateNewFlight()
     {
-        Console.WriteLine("Enter Flight Number:");
-        string flightNumber = Console.ReadLine();
-
-        Console.WriteLine("Enter Origin:");
-        string origin = Console.ReadLine();
-
-        Console.WriteLine("Enter Destination:");
-        string destination = Console.ReadLine();
-
-        Console.WriteLine("Enter Expected Departure/Arrival Time (YYYY/MM/DD HH:MM):");
-        string expectedTime = Console.ReadLine();
-
-        DateTime expectedDateTime;
-        if (!DateTime.TryParse(expectedTime, out expectedDateTime))
+        try
         {
-            Console.WriteLine("Invalid date format. Please enter the time in the correct format.");
-            continue;
+            Console.WriteLine("Enter Flight Number:");
+            string flightNumber = Console.ReadLine();
+
+            Console.WriteLine("Enter Origin:");
+            string origin = Console.ReadLine();
+
+            Console.WriteLine("Enter Destination:");
+            string destination = Console.ReadLine();
+
+            Console.WriteLine("Enter Expected Departure/Arrival Time (YYYY/MM/DD HH:MM):");
+            string expectedTime = Console.ReadLine();
+
+            if (!DateTime.TryParse(expectedTime, out DateTime expectedDateTime))
+            {
+                Console.WriteLine("Invalid date format.");
+                return;
+            }
+
+            Console.WriteLine("Would you like to add a Special Request Code? [Y/N]");
+            string requestCode = string.Empty;
+            if (Console.ReadLine().ToUpper() == "Y")
+            {
+                Console.WriteLine("Enter Special Request Code:");
+                requestCode = Console.ReadLine();
+            }
+
+            Flight newFlight = new NORMFlight
+            {
+                FlightNumber = flightNumber,
+                Origin = origin,
+                Destination = destination,
+                ExpectedTime = expectedDateTime,
+                Status = "Scheduled"
+            };
+
+            Flights.Add(flightNumber, newFlight);
+            Console.WriteLine($"Flight {flightNumber} created successfully.");
         }
-
-        string formattedTime = expectedDateTime.ToString("d/M/yyyy h:mm tt");
-
-        Console.WriteLine("Would you like to add a Special Request Code? [Y/N]");
-        string requestCode = string.Empty;
-
-        if (Console.ReadLine().ToUpper() == "Y")
+        catch (Exception ex)
         {
-            Console.WriteLine("Enter Special Request Code:");
-            requestCode = Console.ReadLine();
-        }
-
-        Flight newFlight = new Flight
-        {
-            FlightNumber = flightNumber,
-            Origin = origin,
-            Destination = destination,
-            ExpectedTime = formattedTime,  
-            RequestCode = requestCode
-        };
-
-        if (Airlines.ContainsKey(flightno))
-        {
-            Airline selectedAirline = Airlines[flightno];
-            selectedAirline.AddFlight(newFlight);
-            Console.WriteLine($"Flight {flightNumber} from {origin} to {destination} has been successfully created and added.");
-        }
-        else
-        {
-            Console.WriteLine("Invalid Airline Code entered. Flight was not created.");
+            Console.WriteLine("An error occurred while creating the flight.");
+            Console.WriteLine(ex.Message);
         }
     }
-}
-
 
     //7//
     void DisplayAirlineDetails()
@@ -592,29 +634,70 @@ void CreateNewFlight(string flightno)
 
 
 
-
-    public void DisplayMenu()
+  public void DisplayMenu()
     {
-        Console.WriteLine("=============================================");
-        Console.WriteLine("Welcome to Changi Airport Terminal 5");
-        Console.WriteLine("=============================================");
+        try
+        {
+            while (true)
+            {
+                Console.WriteLine("=============================================");
+                Console.WriteLine("Welcome to Changi Airport Terminal 5");
+                Console.WriteLine("=============================================");
 
-        Console.WriteLine("1. List All Flights");
-        Console.WriteLine("2. List Boarding Gates");
-        Console.WriteLine("3. Assign a Boarding Gate to a Flight");
-        Console.WriteLine("4. Create Flight");
-        Console.WriteLine("5. Display Airline Flights");
-        Console.WriteLine("6. Modify Flight Details");
-        Console.WriteLine("7. Display Flight Schedule");
-        Console.WriteLine("0. Exit");
+                Console.WriteLine("1. List All Flights");
+                Console.WriteLine("2. List Boarding Gates");
+                Console.WriteLine("3. Assign a Boarding Gate to a Flight");
+                Console.WriteLine("4. Create Flight");
+                Console.WriteLine("5. Display Airline Flights");
+                Console.WriteLine("6. Modify Flight Details");
+                Console.WriteLine("7. Display Flight Schedule");
+                Console.WriteLine("0. Exit");
+
+                Console.Write("Enter your choice: ");
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        // Implement listing flights
+                        break;
+                    case "2":
+                        // Implement listing gates
+                        break;
+                    case "3":
+                        // Implement gate assignment
+                        break;
+                    case "4":
+                        CreateNewFlight();
+                        break;
+                    case "5":
+                        // Implement airline flight details
+                        break;
+                    case "6":
+                        // Implement modify flight details
+                        break;
+                    case "7":
+                        // Implement display schedule
+                        break;
+                    case "0":
+                        Console.WriteLine("Exiting program...");
+                        return;
+                    default:
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred in the menu.");
+            Console.WriteLine(ex.Message);
+        }
     }
 
     static void Main(string[] args)
     {
         Program program = new Program();
         program.DisplayMenu();
-        
     }
-
-
-}   
+}
