@@ -7,10 +7,13 @@ class program
     {
       if (flight != Flights.ContainsKey)
       {
-        
+        unassignedFlights.Enqueue(flight);
         
       }
     }
+
+     Console.WriteLine($"Total number of Flights without Boarding Gate assigned: {unassignedFlights.Count}");
+    
     
   }
 
