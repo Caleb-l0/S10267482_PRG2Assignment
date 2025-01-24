@@ -1,3 +1,11 @@
+//==========================================================//
+// Student Number : S10267482//
+// Student Name : Caleeb Low//
+// Partner Name : Winston Chin//
+//==========================================================//
+
+
+
 public class Terminal
 {
     public string TerminalName { get; set; }
