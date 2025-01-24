@@ -213,63 +213,170 @@ class Program
 
     public void CalculateTotalFee()
     {
-        double totalFees = 0;
-        foreach (var flight in terminal.Flights.Values)
+        try
         {
-            totalFees += flight.CalculateFees();
+            double totalFees = 0;
+            foreach (var flight in terminal.Flights.Values)
+            {
+                totalFees += flight.CalculateFees();
+            }
+            Console.WriteLine($"Total Fees: {totalFees}");
         }
-        Console.WriteLine($"Total Fees: {totalFees}");
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error calculating total fees: {ex.Message}");
+        }
     }
+
 
     void ReadAirlines()
     {
-        string[] lines = File.ReadAllLines("airlines.csv");
-        for (int i = 1; i < lines.Length; i++)
+        try
         {
-            string[] data = lines[i].Split(',');
-            string airlineName = data[0];
-            string airlineCode = data[1];
+            string[] lines = File.ReadAllLines("airlines.csv");
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string[] data = lines[i].Split(',');
+                if (data.Length < 2)
+                {
+                    throw new FormatException($"Invalid data format in airlines.csv at line {i + 1}");
+                }
+                string airlineName = data[0];
+                string airlineCode = data[1];
 
-            Airline airline = new Airline(airlineName, airlineCode);
-            terminal.AddAirline(airline);
+                Airline airline = new Airline(airlineName, airlineCode);
+                if (!terminal.AddAirline(airline))
+                {
+                    Console.WriteLine($"Airline with code {airlineCode} already exists.");
+                }
+            }
+        }
+        catch (FileNotFoundException fnfEx)
+        {
+            Console.WriteLine($"Error: The file 'airlines.csv' was not found. {fnfEx.Message}");
+        }
+        catch (FormatException formatEx)
+        {
+            Console.WriteLine($"Error: {formatEx.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error reading airlines: {ex.Message}");
         }
     }
+
 
     void ReadBoardingGates()
     {
-        string[] lines = File.ReadAllLines("boardinggates.csv");
-        for (int i = 1; i < lines.Length; i++)
+        try
         {
-            string[] data = lines[i].Split(',');
-            string gateName = data[0];
-            bool supportsDDJB = data[1] == "True";
-            bool supportsCFFT = data[2] == "True";
-            bool supportsLWTT = data[3] == "True";
+            string[] lines = File.ReadAllLines("boardinggates.csv");
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string[] data = lines[i].Split(',');
+                if (data.Length < 4)
+                {
+                    throw new FormatException($"Invalid data format in boardinggates.csv at line {i + 1}");
+                }
 
-            BoardingGate gate = new BoardingGate(gateName, supportsCFFT, supportsDDJB, supportsLWTT);
-            terminal.AddBoardingGate(gate);
+                string gateName = data[0];
+                bool supportsDDJB = data[1] == "True";
+                bool supportsCFFT = data[2] == "True";
+                bool supportsLWTT = data[3] == "True";
+
+                BoardingGate gate = new BoardingGate(gateName, supportsCFFT, supportsDDJB, supportsLWTT);
+                if (!terminal.AddBoardingGate(gate))
+                {
+                    Console.WriteLine($"Boarding gate {gateName} already exists.");
+                }
+            }
+        }
+        catch (FileNotFoundException fnfEx)
+        {
+            Console.WriteLine($"Error: The file 'boardinggates.csv' was not found. {fnfEx.Message}");
+        }
+        catch (FormatException formatEx)
+        {
+            Console.WriteLine($"Error: {formatEx.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error reading boarding gates: {ex.Message}");
         }
     }
 
+
     public void DisplayMenu()
     {
-        Console.WriteLine("=============================================");
-        Console.WriteLine("Welcome to Changi Airport Terminal 5");
-        Console.WriteLine("=============================================");
+        try
+        {
+            Console.WriteLine("=============================================");
+            Console.WriteLine("Welcome to Changi Airport Terminal 5");
+            Console.WriteLine("=============================================");
 
-        Console.WriteLine("1. List All Flights");
-        Console.WriteLine("2. List Boarding Gates");
-        Console.WriteLine("3. Assign a Boarding Gate to a Flight");
-        Console.WriteLine("4. Create Flight");
-        Console.WriteLine("5. Display Airline Flights");
-        Console.WriteLine("6. Modify Flight Details");
-        Console.WriteLine("7. Display Flight Schedule");
-        Console.WriteLine("0. Exit");
+            Console.WriteLine("1. List All Flights");
+            Console.WriteLine("2. List Boarding Gates");
+            Console.WriteLine("3. Assign a Boarding Gate to a Flight");
+            Console.WriteLine("4. Create Flight");
+            Console.WriteLine("5. Display Airline Flights");
+            Console.WriteLine("6. Modify Flight Details");
+            Console.WriteLine("7. Display Flight Schedule");
+            Console.WriteLine("0. Exit");
+
+            // Handle user input here, with proper exception handling:
+            int choice = Convert.ToInt32(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    // List flights (implement this)
+                    break;
+                case 2:
+                    // List boarding gates (implement this)
+                    break;
+                case 3:
+                    // Assign boarding gate to flight (implement this)
+                    break;
+                case 4:
+                    // Create flight (implement this)
+                    break;
+                case 5:
+                    // Display airline flights (implement this)
+                    break;
+                case 6:
+                    // Modify flight details (implement this)
+                    break;
+                case 7:
+                    // Display flight schedule (implement this)
+                    break;
+                case 0:
+                    Console.WriteLine("Exiting...");
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice, please try again.");
+                    break;
+            }
+        }
+        catch (FormatException formatEx)
+        {
+            Console.WriteLine($"Input error: {formatEx.Message}. Please enter a valid number.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
     }
+
 
     static void Main(string[] args)
     {
-        Program program = new Program();
-        program.DisplayMenu();
+        try
+        {
+            Program program = new Program();
+            program.DisplayMenu();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
-}
