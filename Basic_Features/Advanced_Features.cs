@@ -81,6 +81,8 @@ class program
         
         
     }
+    Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {}")
+    Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {(flightsAssigned}/{gatesAssigned)*100}%");
     Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {flightsAssigned}/{gatesAssigned}");
 
 
