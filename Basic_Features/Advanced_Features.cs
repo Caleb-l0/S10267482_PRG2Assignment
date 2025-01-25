@@ -26,13 +26,15 @@ class program
     }
     Console.WriteLine($"Total number of Boarding Gates without a Flight Number assigned: {unassignedGates.Count}");
 
+    int flightsAssigned = 0;
+    int gatesAssigned = 0;
     while (unassignedFlights.Count > 0)
     {
       var flight = unassignedFlights.Dequeue();
     }
     
     
-    }
+  }
 
 
 }
