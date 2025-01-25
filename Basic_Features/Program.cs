@@ -413,6 +413,88 @@ class Program
         }
     }
 
+    void ReadFlights()
+    {
+        try
+        {
+            string[] lines = File.ReadAllLines("flights.csv");
+            for (int i = 1; i < lines.Length; i++) // Skip header
+            {
+                string[] data = lines[i].Split(',');
+                if (data.Length < 5)
+                {
+                    Console.WriteLine($"Skipping invalid line at {i + 1}: {lines[i]}");
+                    continue;
+                }
+
+                string flightNumber = data[0];
+                string origin = data[1];
+                string destination = data[2];
+                DateTime expectedTime;
+                if (!DateTime.TryParse(data[3], out expectedTime))
+                {
+                    Console.WriteLine($"Invalid date format for flight {flightNumber}. Skipping...");
+                    continue;
+                }
+                string specialRequestCode = data[4];
+
+                // Determine flight type based on Special Request Code
+                Flight flight;
+                switch (specialRequestCode.Trim())
+                {
+                    case "DDJB":
+                        flight = new DDJBFlight { FlightNumber = flightNumber, Origin = origin, Destination = destination, ExpectedTime = expectedTime, Status = "Scheduled" };
+                        break;
+                    case "LWTT":
+                        flight = new LWTTFlight { FlightNumber = flightNumber, Origin = origin, Destination = destination, ExpectedTime = expectedTime, Status = "Scheduled" };
+                        break;
+                    case "CFFT":
+                        flight = new CFFTFlight { FlightNumber = flightNumber, Origin = origin, Destination = destination, ExpectedTime = expectedTime, Status = "Scheduled" };
+                        break;
+                    default:
+                        flight = new NORMFlight { FlightNumber = flightNumber, Origin = origin, Destination = destination, ExpectedTime = expectedTime, Status = "Scheduled" };
+                        break;
+                }
+
+                // Add flight to the dictionary
+                if (!terminal.Flights.ContainsKey(flightNumber))
+                {
+                    terminal.Flights[flightNumber] = flight;
+                }
+                else
+                {
+                    Console.WriteLine($"Duplicate flight number {flightNumber}. Skipping...");
+                }
+            }
+            Console.WriteLine("Flights loaded successfully.");
+        }
+        catch (FileNotFoundException ex)
+        {
+            Console.WriteLine($"Error: The file 'flights.csv' was not found. {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while reading flights: {ex.Message}");
+        }
+    }
+
+    void PrintFlights()
+    {
+        Console.WriteLine("=============================================");
+        Console.WriteLine("\nList of Flights for Changi Airport Terminal 5\n");
+        Console.WriteLine("=============================================");
+
+        Console.WriteLine($"{"Flight Number"} {"Airline Name"} {"Origin"} {"Destination"} {"Expected Departure/Arrival Time"}");
+
+
+        foreach (var flight in terminal.Flights.Values)
+        {
+            string airlineName = terminal.GetAirlineFromFlight(flight)?.Name ?? "Unknown Airline";
+            Console.WriteLine($"{flight.FlightNumber} {airlineName} {flight.Origin} {flight.Destination} {flight.ExpectedTime.ToString("d/M/yyyy hh:mm:ss tt")}");
+        }
+        Console.WriteLine("\n\n\n\n\n");
+    }
+
 
     void ModifyFlightDetails()
     {
@@ -456,8 +538,8 @@ class Program
         Console.WriteLine("5. Display Airline Flights");
         Console.WriteLine("6. Modify Flight Details");
         Console.WriteLine("7. Display Flight Schedule");
-        Console.WriteLine("0. Exit");
-        Console.Write("Choose an option: ");
+        Console.WriteLine("0. Exit\n\n");
+        Console.Write("Please select your option:\n ");
     }
 
     static void Main(string[] args)
@@ -465,8 +547,15 @@ class Program
         Program program = new Program();
         try
         {
+            Console.WriteLine("Loading Airlines...");
             program.ReadAirlines();
+            Console.WriteLine($"{program.terminal.Airlines.Count} Airlines Loaded!");
+            Console.WriteLine("Loading Boarding Gates...");
             program.ReadBoardingGates();
+            Console.WriteLine($"{program.terminal.BoardingGates.Count} Boarding Gates Loaded!");
+            Console.WriteLine("Loading Flights...");
+            program.ReadFlights();
+            Console.WriteLine($"{program.terminal.Flights.Count} Flights Loaded!\n\n\n\n");
 
             while (true)
             {
@@ -479,7 +568,7 @@ class Program
                         switch (choice)
                         {
                             case 1:
-                                program.DisplayAirlinesFlights();
+                                program.PrintFlights();
                                 break;
                             case 2:
                                 program.ListBoardingGates();
