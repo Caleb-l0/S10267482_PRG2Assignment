@@ -31,7 +31,7 @@ class program
     while (unassignedFlights.Count > 0)
     {
       var flight = unassignedFlights.Dequeue();
-      assignedGate = null;
+      BoardingGate assignedGate = null;
       foreach (var gate in unassignedGates)
       {
         if (flight.SpecialRequestCode == "DDJB")
