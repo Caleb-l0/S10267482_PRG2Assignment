@@ -92,7 +92,11 @@ class program
   }
 
   //second feature//
-  void 
+  void TotalAirlineFee
+  {
+    
+  
+  }
 
 
 }
