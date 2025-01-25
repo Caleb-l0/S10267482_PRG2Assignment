@@ -424,6 +424,7 @@ class Program
             selectedGate.Flight = flight;
 
             Console.WriteLine($"Flight {flight.FlightNumber} has been assigned to Boarding Gate {selectedGate.GateName}!");
+            Console.WriteLine("\n\n\n\n\n");
         }
         catch (Exception ex)
         {
@@ -432,27 +433,35 @@ class Program
     }
 
 
-
     void CreateFlight()
     {
         try
         {
-            Console.WriteLine("Enter Flight Number:");
+            Console.Write("Enter Flight Number: ");
             string flightNumber = Console.ReadLine();
 
-            Console.WriteLine("Enter Origin:");
+            Console.Write("Enter Origin: ");
             string origin = Console.ReadLine();
 
-            Console.WriteLine("Enter Destination:");
+            Console.Write("Enter Destination: ");
             string destination = Console.ReadLine();
 
-            Console.WriteLine("Enter Expected Departure/Arrival Time (YYYY/MM/DD HH:MM):");
+            Console.Write("Enter Expected Departure/Arrival Time (dd/mm/yyyy hh:mm): ");
             string expectedTime = Console.ReadLine();
 
             DateTime expectedDateTime;
-            if (!DateTime.TryParse(expectedTime, out expectedDateTime))
+            if (!DateTime.TryParseExact(expectedTime, "d/M/yyyy HH:mm", null, System.Globalization.DateTimeStyles.None, out expectedDateTime))
             {
-                Console.WriteLine("Invalid date format. Please enter the time in the correct format.");
+                Console.WriteLine("Invalid date format. Please enter the time in the correct format (dd/mm/yyyy hh:mm).");
+                return;
+            }
+
+            Console.Write("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
+            string specialRequestCode = Console.ReadLine().ToUpper();
+
+            if (specialRequestCode != "CFFT" && specialRequestCode != "DDJB" && specialRequestCode != "LWTT" && specialRequestCode != "NONE")
+            {
+                Console.WriteLine("Invalid Special Request Code. Please enter a valid code (CFFT, DDJB, LWTT, or None).");
                 return;
             }
 
@@ -462,22 +471,23 @@ class Program
                 Origin = origin,
                 Destination = destination,
                 ExpectedTime = expectedDateTime,
-                Status = "Scheduled"
+                Status = "Scheduled",
             };
 
             terminal.Flights.Add(flightNumber, newFlight);
 
-            Console.WriteLine("Enter Airline Code to associate with this flight:");
-            string airlineCode = Console.ReadLine().ToUpper();
+            Console.WriteLine($"Flight {flightNumber} has been added!");
 
-            if (terminal.Airlines.ContainsKey(airlineCode))
+            Console.WriteLine("Would you like to add another flight? (Y/N): ");
+            string anotherFlight = Console.ReadLine().ToUpper();
+
+            if (anotherFlight == "Y")
             {
-                terminal.Airlines[airlineCode].AddFlight(newFlight);
-                Console.WriteLine($"Flight {flightNumber} added to {terminal.Airlines[airlineCode].Name}.");
+                CreateFlight(); 
             }
             else
             {
-                Console.WriteLine("Airline not found.");
+                Console.WriteLine("\n\n\n\n");
             }
         }
         catch (Exception ex)
@@ -485,6 +495,7 @@ class Program
             Console.WriteLine($"An error occurred while creating the flight: {ex.Message}");
         }
     }
+
 
     void ReadFlights()
     {
