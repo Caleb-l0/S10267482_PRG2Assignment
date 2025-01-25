@@ -64,9 +64,23 @@ class program
       }
       if (assignedGate != null)
       {
-        
+        flight.BoardingGate = assignedGate;
+        assignedGate.AssignedFlight = flight;
+        unassignedGates.Remove(assignedGate);
+        flightsAssigned++;
+        gatesAssigned++;
+
+        Console.WriteLine($"Assigned Boarding Gate {assignedGate.GateNumber} to Flight {flight.FlightNumber}");
+      }  
+      else
+      {
+        Console.WriteLine($"No available boarding gate for Flight {flight.FlightNumber}.");
         
       }
+        
+        
+    }
+    Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {flightsAssigned}/{gatesAssigned}");
 
 
 
