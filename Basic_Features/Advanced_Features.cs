@@ -71,6 +71,7 @@ class program
         gatesAssigned++;
 
         Console.WriteLine($"Assigned Boarding Gate {assignedGate.GateNumber} to Flight {flight.FlightNumber}");
+        Console.WriteLine($"(Display Flight Details)")
       }  
       else
       {
