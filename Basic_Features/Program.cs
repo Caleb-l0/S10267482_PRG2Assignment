@@ -213,13 +213,21 @@ class Program
 
     public void CalculateTotalFee()
     {
-        double totalFees = 0;
-        foreach (var flight in terminal.Flights.Values)
+        try
         {
-            totalFees += flight.CalculateFees();
+            double totalFees = 0;
+            foreach (var flight in terminal.Flights.Values)
+            {
+                totalFees += flight.CalculateFees();
+            }
+            Console.WriteLine($"Total Fees: {totalFees}");
         }
-        Console.WriteLine($"Total Fees: {totalFees}");
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error calculating total fees: {ex.Message}");
+        }
     }
+
 
     void ReadAirlines()
     {
@@ -229,16 +237,31 @@ class Program
             for (int i = 1; i < lines.Length; i++)
             {
                 string[] data = lines[i].Split(',');
+                if (data.Length < 2)
+                {
+                    throw new FormatException($"Invalid data format in airlines.csv at line {i + 1}");
+                }
                 string airlineName = data[0];
                 string airlineCode = data[1];
 
                 Airline airline = new Airline(airlineName, airlineCode);
-                terminal.AddAirline(airline);
+                if (!terminal.AddAirline(airline))
+                {
+                    Console.WriteLine($"Airline with code {airlineCode} already exists.");
+                }
             }
+        }
+        catch (FileNotFoundException fnfEx)
+        {
+            Console.WriteLine($"Error: The file 'airlines.csv' was not found. {fnfEx.Message}");
+        }
+        catch (FormatException formatEx)
+        {
+            Console.WriteLine($"Error: {formatEx.Message}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error reading airlines file: {ex.Message}");
+            Console.WriteLine($"Error reading airlines: {ex.Message}");
         }
     }
 
@@ -250,18 +273,34 @@ class Program
             for (int i = 1; i < lines.Length; i++)
             {
                 string[] data = lines[i].Split(',');
+                if (data.Length < 4)
+                {
+                    throw new FormatException($"Invalid data format in boardinggates.csv at line {i + 1}");
+                }
+
                 string gateName = data[0];
                 bool supportsDDJB = data[1] == "True";
                 bool supportsCFFT = data[2] == "True";
                 bool supportsLWTT = data[3] == "True";
 
                 BoardingGate gate = new BoardingGate(gateName, supportsCFFT, supportsDDJB, supportsLWTT);
-                terminal.AddBoardingGate(gate);
+                if (!terminal.AddBoardingGate(gate))
+                {
+                    Console.WriteLine($"Boarding gate {gateName} already exists.");
+                }
             }
+        }
+        catch (FileNotFoundException fnfEx)
+        {
+            Console.WriteLine($"Error: The file 'boardinggates.csv' was not found. {fnfEx.Message}");
+        }
+        catch (FormatException formatEx)
+        {
+            Console.WriteLine($"Error: {formatEx.Message}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error reading boarding gates file: {ex.Message}");
+            Console.WriteLine($"Error reading boarding gates: {ex.Message}");
         }
     }
 
