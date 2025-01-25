@@ -31,6 +31,46 @@ class program
     while (unassignedFlights.Count > 0)
     {
       var flight = unassignedFlights.Dequeue();
+      assignedGate = null;
+      foreach (var gate in unassignedGates)
+      {
+        if (flight.SpecialRequestCode == "DDJB")
+        {
+            if (gate.DDJB)
+            {
+                assignedGate = gate;  // Gate can accommodate DDJB
+                gateFound = true;
+                break;
+            }
+        }
+        else if (flight.SpecialRequestCode == "CFFT")
+        {
+            if (gate.CFFT)
+            {
+                assignedGate = gate;  // Gate can accommodate CFFT
+                gateFound = true;
+                break;
+            }
+        }
+        else if (flight.SpecialRequestCode == "LWTT")
+        {
+            if (gate.LWTT)
+            {
+                assignedGate = gate;  // Gate can accommodate LWTT
+                gateFound = true;
+                break;
+            }
+        }
+      }
+      if (assignedGate != null)
+      {
+        
+        
+      }
+
+
+
+      
     }
     
     
