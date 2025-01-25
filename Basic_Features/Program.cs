@@ -320,12 +320,19 @@ class Program
 
     void ListBoardingGates()
     {
-        Console.WriteLine("Boarding Gates and their Info:");
+        Console.WriteLine("=============================================");
+        Console.WriteLine("List of Boarding Gates for Changi Airport Terminal 5");
+        Console.WriteLine("=============================================");
+        Console.WriteLine("{0,-15} {1,-20} {2,-20} {3,-20}", "Gate Name", "DDJB", "CFFT", "LWTT");
+
         foreach (var gate in terminal.BoardingGates.Values)
         {
-            Console.WriteLine(gate.ToString());
+            Console.WriteLine("{0,-15} {1,-20} {2,-20} {3,-20}", gate.GateName, gate.SupportsDDJB, gate.SupportsCFFT, gate.SupportsLWTT);
         }
+        Console.WriteLine("\n\n\n\n\n");
     }
+
+
 
     void AssignGateToFlight()
     {
@@ -481,19 +488,23 @@ class Program
     void PrintFlights()
     {
         Console.WriteLine("=============================================");
-        Console.WriteLine("\nList of Flights for Changi Airport Terminal 5\n");
+        Console.WriteLine("\nList of Flights for Changi Airport Terminal 5");
         Console.WriteLine("=============================================");
 
-        Console.WriteLine($"{"Flight Number"} {"Airline Name"} {"Origin"} {"Destination"} {"Expected Departure/Arrival Time"}");
+        // Print column headers with proper alignment
+        Console.WriteLine("{0,-15} {1,-20} {2,-25} {3,-25} {4,-30}",
+            "Flight Number", "Airline Name", "Origin", "Destination", "Expected Departure/Arrival Time");
 
-
+        // Print each flight with aligned columns
         foreach (var flight in terminal.Flights.Values)
         {
             string airlineName = terminal.GetAirlineFromFlight(flight)?.Name ?? "Unknown Airline";
-            Console.WriteLine($"{flight.FlightNumber} {airlineName} {flight.Origin} {flight.Destination} {flight.ExpectedTime.ToString("d/M/yyyy hh:mm:ss tt")}");
+            Console.WriteLine("{0,-15} {1,-20} {2,-25} {3,-25} {4,-30}",
+                flight.FlightNumber, airlineName, flight.Origin, flight.Destination, flight.ExpectedTime.ToString("d/M/yyyy hh:mm:ss tt"));
         }
         Console.WriteLine("\n\n\n\n\n");
     }
+
 
 
     void ModifyFlightDetails()
@@ -539,7 +550,7 @@ class Program
         Console.WriteLine("6. Modify Flight Details");
         Console.WriteLine("7. Display Flight Schedule");
         Console.WriteLine("0. Exit\n\n");
-        Console.Write("Please select your option:\n ");
+        Console.Write("Please select your option:\n");
     }
 
     static void Main(string[] args)
