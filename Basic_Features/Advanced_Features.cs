@@ -45,27 +45,35 @@ class program
         BoardingGate assignedGate = null;
         bool gateFound = false;
 
-        foreach (var gate in unassignedGates)
-        {
-            if (flight.SpecialRequestCode == "DDJB" && gate.DDJB)
-            {
-                assignedGate = gate;
-                gateFound = true;
-                break;
-            }
-            else if (flight.SpecialRequestCode == "CFFT" && gate.CFFT)
-            {
-                assignedGate = gate;
-                gateFound = true;
-                break;
-            }
-            else if (flight.SpecialRequestCode == "LWTT" && gate.LWTT)
-            {
-                assignedGate = gate;
-                gateFound = true;
-                break;
-            }
-        }
+         foreach (var gate in unassignedGates)
+         {
+    
+           if (flight is NORMFlight && assignedGate == null)
+           {
+               assignedGate = gate;
+               gateFound = true;
+               break;
+           }
+    
+           else if (flight is DDJBFlight && gate.SupportsDDJB)
+           {
+               assignedGate = gate;
+               gateFound = true;
+               break;
+           }
+           else if (flight is CFFTFlight && gate.SupportsCFFT)
+           {
+               assignedGate = gate;
+               gateFound = true;
+               break;
+           }
+           else if (flight is LWTTFlight && gate.SupportsLWTT)
+           {
+               assignedGate = gate;
+               gateFound = true;
+               break;
+           }
+       }
 
         if (assignedGate != null && gateFound)
         {
