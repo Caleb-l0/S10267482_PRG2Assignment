@@ -82,7 +82,7 @@ class program
             flightsAssigned++;
             gatesAssigned++;
 
-            Console.WriteLine($"Assigned Boarding Gate {assignedGate.GateNumber} to Flight {flight.FlightNumber}");
+            Console.WriteLine($"Assigned Boarding Gate {assignedGate.GateName} to Flight {flight.FlightNumber}");
             DisplayAirlinesFlights();
         }
         else
