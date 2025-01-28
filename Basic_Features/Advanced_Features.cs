@@ -83,9 +83,20 @@ class program
         }
     }
 
+    //Calculate Total and percentage//
+    int totalGatesAssigned = gatesAssigned; 
+
+    if (totalGatesAssigned == 0)
+    {
+        totalGatesAssigned = 1; 
+    }
+
+    double percentageAssigned = (flightsAssigned * 100.0) / totalGatesAssigned;
+  
     Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {flightsAssigned}");
-    Console.WriteLine($"Percentage of Flights and Boarding Gates processed and assigned: {(flightsAssigned * 100) / gatesAssigned}%");
-    Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {flightsAssigned}/{gatesAssigned}");
+    Console.WriteLine($"Percentage of Flights and Boarding Gates processed and assigned: {percentageAssigned}%");
+
+   
   }
 
 
