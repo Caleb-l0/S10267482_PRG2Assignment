@@ -1,16 +1,26 @@
 class program
 {
   void UnassignedFlights() //s102674822
-{
+  {
     Queue<Flight> unassignedFlights = new Queue<Flight>();
 
-    foreach (var flight in Terminal.Flights.Values)
-    {
-        if (!Flights.ContainsKey(flight.FlightNumber)) 
-        {
-            unassignedFlights.Enqueue(flight);
-        }
-    }
+     foreach (var flight in terminal.Flights.Values)
+     {
+     // Check if the flight is not currently assigned to any boarding gate
+     bool isAssigned = false;
+     foreach (var gate in terminal.BoardingGates.Values)
+     {
+         if (gate.Flight == flight)
+         {
+             isAssigned = true;
+             break;
+         }
+     }
+     if (!isAssigned)
+     {
+         unassignedFlights.Enqueue(flight);
+     }
+   }
 
     Console.WriteLine($"Total number of Flights without Boarding Gate assigned: {unassignedFlights.Count}");
 
@@ -77,7 +87,7 @@ class program
     Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {flightsAssigned}");
     Console.WriteLine($"Percentage of Flights and Boarding Gates processed and assigned: {(flightsAssigned * 100) / gatesAssigned}%");
     Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {flightsAssigned}/{gatesAssigned}");
-}
+  }
 
 
   //second feature//
