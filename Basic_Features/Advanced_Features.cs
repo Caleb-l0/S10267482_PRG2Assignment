@@ -69,8 +69,7 @@ class program
 
         if (assignedGate != null && gateFound)
         {
-            flight.BoardingGate = assignedGate;
-            assignedGate.AssignedFlight = flight;
+            assignedGate.Flight = flight; 
             unassignedGates.Remove(assignedGate);
             flightsAssigned++;
             gatesAssigned++;
