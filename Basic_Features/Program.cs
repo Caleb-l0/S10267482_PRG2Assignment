@@ -133,7 +133,7 @@ public class Airline
 
 public abstract class Flight
 {
-    protected double baseFee = 100.0; 
+    protected double baseFee = 100.0;
 
     public string FlightNumber { get; set; }
     public string Origin { get; set; }
@@ -307,16 +307,83 @@ class Program
 
     void DisplayAirlinesFlights()
     {
-        Console.WriteLine("Airlines and Their Flights:");
-        foreach (var airline in terminal.Airlines.Values)
+        Console.WriteLine("=============================================");
+        Console.WriteLine("List of Airlines for Changi Airport Terminal 5");
+        Console.WriteLine("=============================================");
+        Console.WriteLine("{0,-15} {1,-20}", "Airline Code", "Airline Name");
+
+        Console.WriteLine("{0,-15} {1,-20}", "SQ", "Singapore Airlines");
+        Console.WriteLine("{0,-15} {1,-20}", "MH", "Malaysia Airlines");
+        Console.WriteLine("{0,-15} {1,-20}", "JL", "Japan Airlines");
+        Console.WriteLine("{0,-15} {1,-20}", "CX", "Cathay Pacific");
+        Console.WriteLine("{0,-15} {1,-20}", "QF", "Qantas Airways");
+        Console.WriteLine("{0,-15} {1,-20}", "TR", "AirAsia");
+        Console.WriteLine("{0,-15} {1,-20}", "EK", "Emirates");
+        Console.WriteLine("{0,-15} {1,-20}", "BA", "British Airways");
+        Console.Write("Enter Airline Code: ");
+        string airlineCode = Console.ReadLine().Trim().ToUpper();
+
+
+        string airlineName = GetAirlineNameFromCode(airlineCode);
+
+        if (airlineName == "Unknown Airline")
         {
-            Console.WriteLine($"Airline: {airline.Name}");
-            foreach (var flight in airline.Flights.Values)
+            Console.WriteLine("Invalid airline code. Please try again.");
+            return;
+        }
+
+        Console.WriteLine("=============================================");
+        Console.WriteLine("List of Flights for {0}", airlineName);
+        Console.WriteLine("=============================================");
+        Console.WriteLine("{0,-15} {1,-20} {2,-25} {3,-25} {4,-30}",
+            "Flight Number", "Airline Name", "Origin", "Destination", "Expected Departure/Arrival Time");
+
+        bool hasFlights = false;
+        foreach (var flight in terminal.Flights.Values)
+        {
+            string flightAirlineCode = flight.FlightNumber.Substring(0, 2).ToUpper();
+
+            if (flightAirlineCode == airlineCode)
             {
-                Console.WriteLine($" - Flight Number: {flight.FlightNumber}, Origin: {flight.Origin}, Destination: {flight.Destination}, Status: {flight.Status}");
+                hasFlights = true;
+                Console.WriteLine("{0,-15} {1,-20} {2,-25} {3,-25} {4,-30}",
+                    flight.FlightNumber, airlineName, flight.Origin, flight.Destination, flight.ExpectedTime.ToString("d/M/yyyy hh:mm:ss tt"));
             }
         }
+
+        if (!hasFlights)
+        {
+            Console.WriteLine("No flights found for {0}.", airlineName);
+        }
+
+        Console.WriteLine("\n\n\n\n\n");
     }
+
+    string GetAirlineNameFromCode(string airlineCode)
+    {
+        switch (airlineCode)
+        {
+            case "SQ":
+                return "Singapore Airlines";
+            case "MH":
+                return "Malaysia Airlines";
+            case "JL":
+                return "Japan Airlines";
+            case "CX":
+                return "Cathay Pacific";
+            case "QF":
+                return "Qantas Airways";
+            case "TR":
+                return "AirAsia";
+            case "EK":
+                return "Emirates";
+            case "BA":
+                return "British Airways";
+            default:
+                return "Unknown Airline";
+        }
+    }
+
 
     void ListBoardingGates()
     {
@@ -483,7 +550,7 @@ class Program
 
             if (anotherFlight == "Y")
             {
-                CreateFlight(); 
+                CreateFlight();
             }
             else
             {
@@ -502,7 +569,7 @@ class Program
         try
         {
             string[] lines = File.ReadAllLines("flights.csv");
-            for (int i = 1; i < lines.Length; i++) 
+            for (int i = 1; i < lines.Length; i++)
             {
                 string[] data = lines[i].Split(',');
                 if (data.Length < 5)
@@ -559,6 +626,7 @@ class Program
             Console.WriteLine($"An error occurred while reading flights: {ex.Message}");
         }
     }
+
 
     void PrintFlights()
     {
