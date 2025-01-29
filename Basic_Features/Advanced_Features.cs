@@ -6,6 +6,8 @@ class program
     {
         Queue<Flight> unassignedFlights = new Queue<Flight>();
 
+
+        //Check for unassigned flights//
         foreach (var flight in terminal.Flights.Values)
         {
             bool isAssigned = false;
@@ -27,6 +29,9 @@ class program
 
         List<BoardingGate> unassignedGates = new List<BoardingGate>();
 
+
+        
+        //Check for unassigned gates//
         foreach (var gate in terminal.BoardingGates.Values)
         {
             if (gate.Flight == null)
@@ -40,6 +45,8 @@ class program
         int flightsAssigned = 0;
         int gatesAssigned = 0;
 
+
+        //Assigning Flights to Boarding Gates//
         while (unassignedFlights.Count > 0)
         {
             var flight = unassignedFlights.Dequeue();
