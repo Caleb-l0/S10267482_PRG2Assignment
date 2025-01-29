@@ -131,7 +131,7 @@ public class Airline
     }
 }
 
-public abstract class Flight
+public abstract class Flight : IComparable<Flight>
 {
     protected double baseFee = 100.0;
 
@@ -140,12 +140,20 @@ public abstract class Flight
     public string Destination { get; set; }
     public DateTime ExpectedTime { get; set; }
     public string Status { get; set; }
+    public string SpecialRequestCode { get; set; }
+    public string BoardingGate { get; set; }
+
+    public int CompareTo(Flight other)
+    {
+        if (other == null) return 1; 
+        return this.ExpectedTime.CompareTo(other.ExpectedTime); 
+    }
 
     public abstract double CalculateFees();
 
     public override string ToString()
     {
-        return $"Flight: {FlightNumber}, Origin: {Origin}, Destination: {Destination}, Status: {Status}";
+        return $"Flight: {FlightNumber}, Origin: {Origin}, Destination: {Destination}, Status: {Status}, Expected Time: {ExpectedTime}";
     }
 }
 
@@ -153,7 +161,7 @@ public class NORMFlight : Flight
 {
     public override double CalculateFees()
     {
-        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee; //SG Destination = 500, else 800
+        return (Destination == "Singapore (SIN)" ? 500 : 800) + baseFee;
     }
 
     public override string ToString()
@@ -227,7 +235,6 @@ class Program
             Console.WriteLine($"Error calculating total fees: {ex.Message}");
         }
     }
-
 
     void ReadAirlines()
     {
@@ -304,7 +311,6 @@ class Program
         }
     }
 
-
     void DisplayAirlinesFlights()
     {
         Console.WriteLine("=============================================");
@@ -322,7 +328,6 @@ class Program
         Console.WriteLine("{0,-15} {1,-20}", "BA", "British Airways");
         Console.Write("Enter Airline Code: ");
         string airlineCode = Console.ReadLine().Trim().ToUpper();
-
 
         string airlineName = GetAirlineNameFromCode(airlineCode);
 
@@ -359,31 +364,24 @@ class Program
         Console.WriteLine("\n\n\n\n\n");
     }
 
-    string GetAirlineNameFromCode(string airlineCode)
+    public static class AirlineHelper
     {
-        switch (airlineCode)
+        public static string GetAirlineNameFromCode(string airlineCode)
         {
-            case "SQ":
-                return "Singapore Airlines";
-            case "MH":
-                return "Malaysia Airlines";
-            case "JL":
-                return "Japan Airlines";
-            case "CX":
-                return "Cathay Pacific";
-            case "QF":
-                return "Qantas Airways";
-            case "TR":
-                return "AirAsia";
-            case "EK":
-                return "Emirates";
-            case "BA":
-                return "British Airways";
-            default:
-                return "Unknown Airline";
+            switch (airlineCode)
+            {
+                case "SQ": return "Singapore Airlines";
+                case "MH": return "Malaysia Airlines";
+                case "JL": return "Japan Airlines";
+                case "CX": return "Cathay Pacific";
+                case "QF": return "Qantas Airways";
+                case "TR": return "AirAsia";
+                case "EK": return "Emirates";
+                case "BA": return "British Airways";
+                default: return "Unknown Airline";
+            }
         }
     }
-
 
     void ListBoardingGates()
     {
@@ -398,8 +396,6 @@ class Program
         }
         Console.WriteLine("\n\n\n\n\n");
     }
-
-
 
     void AssignGateToFlight()
     {
@@ -499,7 +495,6 @@ class Program
         }
     }
 
-
     void CreateFlight()
     {
         try
@@ -562,7 +557,6 @@ class Program
             Console.WriteLine($"An error occurred while creating the flight: {ex.Message}");
         }
     }
-
 
     void ReadFlights()
     {
@@ -627,7 +621,6 @@ class Program
         }
     }
 
-
     void PrintFlights()
     {
         Console.WriteLine("=============================================");
@@ -646,35 +639,180 @@ class Program
         Console.WriteLine("\n\n\n\n\n");
     }
 
-
-
     void ModifyFlightDetails()
     {
-        Console.WriteLine("Enter Flight Number to modify:");
-        string flightNumber = Console.ReadLine();
+        Console.WriteLine("=============================================");
+        Console.WriteLine("List of Airlines for Changi Airport Terminal 5");
+        Console.WriteLine("=============================================");
+        Console.WriteLine("{0,-15} {1,-20}", "Airline Code", "Airline Name");
 
-        if (!terminal.Flights.ContainsKey(flightNumber))
+        // List all airlines
+        Console.WriteLine("{0,-15} {1,-20}", "SQ", "Singapore Airlines");
+        Console.WriteLine("{0,-15} {1,-20}", "MH", "Malaysia Airlines");
+        Console.WriteLine("{0,-15} {1,-20}", "JL", "Japan Airlines");
+        Console.WriteLine("{0,-15} {1,-20}", "CX", "Cathay Pacific");
+        Console.WriteLine("{0,-15} {1,-20}", "QF", "Qantas Airways");
+        Console.WriteLine("{0,-15} {1,-20}", "TR", "AirAsia");
+        Console.WriteLine("{0,-15} {1,-20}", "EK", "Emirates");
+        Console.WriteLine("{0,-15} {1,-20}", "BA", "British Airways");
+        Console.Write("Enter Airline Code: ");
+        string airlineCode = Console.ReadLine().Trim().ToUpper();
+
+        string airlineName = GetAirlineNameFromCode(airlineCode);
+        if (airlineName == "Unknown Airline")
+        {
+            Console.WriteLine("Invalid airline code. Please try again.");
+            return;
+        }
+
+        Console.WriteLine("=============================================");
+        Console.WriteLine("List of Flights for {0}", airlineName);
+        Console.WriteLine("=============================================");
+        Console.WriteLine("{0,-15} {1,-25} {2,-25} {3,-25}", "Flight Number", "Origin", "Destination", "Expected Departure/Arrival Time");
+
+        var flights = terminal.Flights.Values.Where(f => f.FlightNumber.StartsWith(airlineCode)).ToList();
+
+        if (flights.Count == 0)
+        {
+            Console.WriteLine("No flights found for {0}.", airlineName);
+            return;
+        }
+
+        foreach (var flight in flights)
+        {
+            Console.WriteLine("{0,-15} {1,-25} {2,-25} {3,-25}",
+                flight.FlightNumber, flight.Origin, flight.Destination, flight.ExpectedTime.ToString("d/M/yyyy hh:mm:ss tt"));
+        }
+
+        Console.WriteLine("Choose an existing Flight to modify or delete: ");
+        string flightNumber = Console.ReadLine();
+        Flight selectedFlight = flights.FirstOrDefault(f => f.FlightNumber == flightNumber);
+
+        if (selectedFlight == null)
         {
             Console.WriteLine("Flight not found!");
             return;
         }
 
-        Flight flight = terminal.Flights[flightNumber];
+        Console.WriteLine("1. Modify Flight");
+        Console.WriteLine("2. Delete Flight");
+        Console.WriteLine("Choose an option: ");
+        string option = Console.ReadLine();
 
-        Console.WriteLine("Enter new Status for the Flight:");
-        string newStatus = Console.ReadLine();
-        flight.Status = newStatus;
+        if (option == "1")
+        {
+            Console.WriteLine("[1] Modify Basic Information");
+            Console.WriteLine("[2] Modify Status");
+            Console.WriteLine("[3] Modify Special Request Code");
+            Console.WriteLine("[4] Modify Boarding Gate");
+            Console.Write("Choose an option: ");
+            string modifyOption = Console.ReadLine();
 
-        Console.WriteLine("Flight details updated successfully.");
+            switch (modifyOption)
+            {
+                case "1":
+                    Console.Write("Enter new Origin: ");
+                    selectedFlight.Origin = Console.ReadLine();
+                    Console.Write("Enter new Destination: ");
+                    selectedFlight.Destination = Console.ReadLine();
+                    Console.Write("Enter new Expected Departure/Arrival Time (dd/MM/yyyy hh:mm tt): ");
+                    selectedFlight.ExpectedTime = DateTime.Parse(Console.ReadLine());
+                    break;
+                case "2":
+                    Console.Write("Enter new Status: ");
+                    selectedFlight.Status = Console.ReadLine();
+                    break;
+                case "3":
+                    Console.Write("Enter new Special Request Code: ");
+                    selectedFlight.SpecialRequestCode = Console.ReadLine();
+                    break;
+                case "4":
+                    Console.Write("Enter new Boarding Gate: ");
+                    selectedFlight.BoardingGate = Console.ReadLine();
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice!");
+                    return;
+            }
+
+            Console.WriteLine("Flight updated!");
+            Console.WriteLine("Flight Number: {0}", selectedFlight.FlightNumber);
+            Console.WriteLine("Airline Name: {0}", airlineName);
+            Console.WriteLine("Origin: {0}", selectedFlight.Origin);
+            Console.WriteLine("Destination: {0}", selectedFlight.Destination);
+            Console.WriteLine("Expected Departure/Arrival Time: {0}", selectedFlight.ExpectedTime.ToString("d/M/yyyy hh:mm:ss tt"));
+            Console.WriteLine("Status: {0}", selectedFlight.Status);
+            Console.WriteLine("Special Request Code: {0}", selectedFlight.SpecialRequestCode ?? "Unassigned");
+            Console.WriteLine("Boarding Gate: {0}", selectedFlight.BoardingGate ?? "Unassigned");
+        }
+        else if (option == "2")
+        {
+            Console.Write("Are you sure you want to delete this flight? [Y/N]: ");
+            string confirm = Console.ReadLine().Trim().ToUpper();
+            if (confirm == "Y")
+            {
+                terminal.Flights.Remove(selectedFlight.FlightNumber);
+                Console.WriteLine("Flight deleted successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Deletion canceled.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid choice!");
+        }
+    }
+
+    string GetAirlineNameFromCode(string airlineCode)
+    {
+        switch (airlineCode)
+        {
+            case "SQ": return "Singapore Airlines";
+            case "MH": return "Malaysia Airlines";
+            case "JL": return "Japan Airlines";
+            case "CX": return "Cathay Pacific";
+            case "QF": return "Qantas Airways";
+            case "TR": return "AirAsia";
+            case "EK": return "Emirates";
+            case "BA": return "British Airways";
+            default: return "Unknown Airline";
+        }
     }
 
     void DisplayFlightSchedule()
     {
-        Console.WriteLine("Flight Schedule:");
-        foreach (var flight in terminal.Flights.Values)
+        Console.WriteLine("=============================================");
+        Console.WriteLine("Flight Schedule for Changi Airport Terminal 5");
+        Console.WriteLine("=============================================");
+
+        var sortedFlights = terminal.Flights.Values.OrderBy(f => f).ToList(); 
+
+        if (sortedFlights.Count == 0)
         {
-            Console.WriteLine($"{flight.FlightNumber}: {flight.Origin} to {flight.Destination}, Scheduled: {flight.ExpectedTime}");
+            Console.WriteLine("No flights scheduled for today.");
+            return;
         }
+
+        Console.WriteLine("{0,-15} {1,-18} {2,-20} {3,-20} {4,-34} {5,-16} {6,-20}",
+            "Flight Number", "Airline Name", "Origin", "Destination", "Expected Departure/Arrival Time", "Status", "Boarding Gate");
+
+        foreach (var flight in sortedFlights)
+        {
+            string airlineName = GetAirlineNameFromCode(flight.FlightNumber.Substring(0, 2)); 
+
+            Console.WriteLine("{0,-15} {1,-18} {2,-20} {3,-20} {4,-34} {5,-16} {6,-25}",
+                flight.FlightNumber,
+                airlineName,
+                flight.Origin,
+                flight.Destination,
+                flight.ExpectedTime.ToString("d/M/yyyy hh:mm:ss tt"),
+                flight.Status, 
+                flight.BoardingGate ?? "-"); 
+        }
+
+        Console.WriteLine("\n\n\n\n\n");
     }
 
     public void DisplayMenu()
@@ -741,7 +879,7 @@ class Program
                                 program.DisplayFlightSchedule();
                                 break;
                             case 0:
-                                Console.WriteLine("Exiting...");
+                                Console.WriteLine("Goodbye!");
                                 return;
                             default:
                                 Console.WriteLine("Invalid choice, try again.");
