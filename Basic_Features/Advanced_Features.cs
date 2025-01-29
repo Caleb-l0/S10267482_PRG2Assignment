@@ -1,6 +1,6 @@
 class program
 {
-  void UnassignedFlights() //s102674822
+  pyblic void UnassignedFlights() //s102674822
   {
     Queue<Flight> unassignedFlights = new Queue<Flight>();
 
