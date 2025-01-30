@@ -139,6 +139,7 @@ class program
   //second feature//
   void TotalAirlineFee
   {
+    Console.WriteLine("");
     
   
   }
