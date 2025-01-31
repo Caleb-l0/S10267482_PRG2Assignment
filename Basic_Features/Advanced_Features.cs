@@ -103,7 +103,7 @@ class program
                 gatesAssigned++;
 
                 // Display the basic information of the flight//
-             
+                Console.WriteLine("=============================================\n");
                 Console.WriteLine($"Flight Number: {flight.FlightNumber}");
                 Console.WriteLine($"Airline Name: {terminal.GetAirlineFromFlight(flight)?.Name ?? "Unknown Airline"}");
                 Console.WriteLine($"Origin: {flight.Origin}");
