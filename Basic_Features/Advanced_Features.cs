@@ -139,7 +139,7 @@ class program
     }
 }
 
- void TotalAirlineFee()
+void TotalAirlineFee()
 {
     try
     {
@@ -147,19 +147,13 @@ class program
         Console.WriteLine("Total Airline Fees for the Day");
         Console.WriteLine("=============================================");
 
-        List<Flight> unassignedFlights = new List<Flight>();
-
-        foreach (var flight in terminal.Flights.Values)
-        {
-            if (flight.BoardingGate == null || flight.BoardingGate == "")
-            {
-                unassignedFlights.Add(flight);
-            }
-        }
+        List<Flight> unassignedFlights = terminal.Flights.Values
+            .Where(flight => flight.BoardingGate == null || flight.BoardingGate.Equals(""))
+            .ToList();
 
         if (unassignedFlights.Count > 0)
         {
-            Console.WriteLine("Some flights are not assigned a boarding gate. Please assign all flights before calculating fees.");
+            Console.WriteLine("Some flights have no boarding gate assigned. Please assign all flights first.");
             return;
         }
 
@@ -176,8 +170,14 @@ class program
             {
                 double fee = 300; 
 
-                if (flight.Destination == "Singapore (SIN)") fee += 500;
-                if (flight.Origin == "Singapore (SIN)") fee += 800;
+                if (flight.Destination == "Singapore (SIN)") 
+                {
+                    fee += 500; 
+                }
+                if (flight.Origin == "Singapore (SIN)") 
+                {
+                    fee += 800; 
+                }
 
                 if (flight.SpecialRequestCode == "DDJB") fee += 300;
                 if (flight.SpecialRequestCode == "CFFT") fee += 150;
@@ -185,19 +185,12 @@ class program
 
                 if (flight.FlightNumber.Length < 2)
                 {
-                    Console.WriteLine($"Warning: Invalid flight number format for {flight.FlightNumber}. Skipping.");
+                    Console.WriteLine($"Warning: Invalid Flight Number format for {flight.FlightNumber}. Skipping.");
                     continue;
                 }
 
-                char[] flightCodeArray = flight.FlightNumber.ToCharArray();
-                string airlineCode = flightCodeArray[0].ToString() + flightCodeArray[1].ToString();
+                string airlineCode = new string(new char[] { flight.FlightNumber[0], flight.FlightNumber[1] });
                 string airlineName = GetAirlineNameFromCode(airlineCode);
-
-                if (!airlineFlightCounts.ContainsKey(airlineName))
-                {
-                    airlineFlightCounts[airlineName] = 0;
-                }
-                airlineFlightCounts[airlineName]++;
 
                 if (!airlineFees.ContainsKey(airlineName))
                 {
@@ -205,11 +198,17 @@ class program
                 }
                 airlineFees[airlineName] += fee;
 
+                if (!airlineFlightCounts.ContainsKey(airlineName))
+                {
+                    airlineFlightCounts[airlineName] = 0;
+                }
+                airlineFlightCounts[airlineName]++;
+
                 totalFees += fee;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error processing flight {flight.FlightNumber}: {ex.Message}");
+                Console.WriteLine($"Error processing Flight {flight.FlightNumber}: {ex.Message}");
             }
         }
 
@@ -220,13 +219,13 @@ class program
                 double discount = 0;
                 int flightCount = airlineFlightCounts[airline];
 
-                discount += (flightCount / 3) * 350;
+                discount += (flightCount / 3) * 350; 
 
                 foreach (var flight in terminal.Flights.Values)
                 {
                     if (flight.FlightNumber.Length < 2) continue;
-                    char[] flightCodeArray = flight.FlightNumber.ToCharArray();
-                    string airlineCode = flightCodeArray[0].ToString() + flightCodeArray[1].ToString();
+
+                    string airlineCode = new string(new char[] { flight.FlightNumber[0], flight.FlightNumber[1] });
                     string currentAirline = GetAirlineNameFromCode(airlineCode);
 
                     if (currentAirline == airline)
@@ -235,13 +234,11 @@ class program
                         {
                             discount += 110;
                         }
-                      
                         if (flight.Origin == "Dubai (DXB)" || flight.Origin == "Bangkok (BKK)" || flight.Origin == "Tokyo (NRT)")
                         {
                             discount += 25;
                         }
-                      
-                        if (!(flight.SpecialRequestCode != null && flight.SpecialRequestCode != ""))
+                        if (string.IsNullOrEmpty(flight.SpecialRequestCode))
                         {
                             discount += 50;
                         }
@@ -250,7 +247,7 @@ class program
 
                 if (flightCount > 5)
                 {
-                    discount += airlineFees[airline] * 0.03;
+                    discount += airlineFees[airline] * 0.03; 
                 }
 
                 airlineFees[airline] -= discount;
@@ -263,17 +260,10 @@ class program
             }
         }
 
-        Console.WriteLine("{0,-20} {1,-15} {2,-15}", "Airline Name", "Original Fees", "Discount Applied");
+        Console.WriteLine("{0,-20} {1,-15} {2,-15}", "Airline Name", "Total Fees", "Discount Applied");
         foreach (var entry in airlineFees)
         {
-            try
-            {
-                Console.WriteLine("{0,-20} ${1,-14:F2} ${2,-14:F2}", entry.Key, totalFees, totalDiscounts);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error displaying data for airline {entry.Key}: {ex.Message}");
-            }
+            Console.WriteLine("{0,-20} ${1,-14:F2} ${2,-14:F2}", entry.Key, airlineFees[entry.Key], airlineDiscounts[entry.Key]);
         }
 
         double finalTotalFees = totalFees - totalDiscounts;
@@ -287,11 +277,12 @@ class program
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+        Console.WriteLine($"Unexpected Error: {ex.Message}");
     }
     finally
     {
         Console.WriteLine("Done processing airline fees.");
     }
 }
+
 
