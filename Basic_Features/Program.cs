@@ -558,22 +558,22 @@ class Program
         {
             string flightNumber = ""; 
             bool validFlightNumber = false;
-
-            //Flight number must be a number
+            
             while (!validFlightNumber)
             {
                 Console.Write("Enter Flight Number: ");
                 flightNumber = Console.ReadLine();
 
-                if (int.TryParse(flightNumber, out _))
+                if (!string.IsNullOrWhiteSpace(flightNumber)) 
                 {
                     validFlightNumber = true;
                 }
                 else
                 {
-                    Console.WriteLine("Invalid Flight Number. Please enter a valid number.");
+                    Console.WriteLine("Flight Number cannot be empty. Please enter a valid flight number.");
                 }
             }
+
 
             string origin = "";
             bool validOrigin = false;
