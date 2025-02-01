@@ -10,42 +10,75 @@ using System.IO;
 
 public class Terminal
 {
+    // Terminal name property
     public string TerminalName { get; set; }
+
+    // Dictionary storing all airlines operating at the terminal
     public Dictionary<string, Airline> Airlines { get; set; } = new Dictionary<string, Airline>();
+
+    // Dictionary storing all flights scheduled at the terminal
     public Dictionary<string, Flight> Flights { get; set; } = new Dictionary<string, Flight>();
+
+    // Dictionary storing all boarding gates available at the terminal
     public Dictionary<string, BoardingGate> BoardingGates { get; set; } = new Dictionary<string, BoardingGate>();
+
+    // Dictionary storing fees associated with different gates
     public Dictionary<string, double> GateFees { get; set; } = new Dictionary<string, double>();
 
     public bool AddAirline(Airline airline)
     {
-        if (!Airlines.ContainsKey(airline.Code))
+        try
         {
-            Airlines[airline.Code] = airline;
-            return true;
+            if (!Airlines.ContainsKey(airline.Code))
+            {
+                Airlines[airline.Code] = airline;
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding airline {airline.Code}: {ex.Message}");
         }
         return false;
     }
 
+    // Adds a new airline to the terminal 
     public bool AddBoardingGate(BoardingGate gate)
     {
-        if (!BoardingGates.ContainsKey(gate.GateName))
+        try
         {
-            BoardingGates[gate.GateName] = gate;
-            return true;
+            if (!BoardingGates.ContainsKey(gate.GateName))
+            {
+                BoardingGates[gate.GateName] = gate;
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding boarding gate: {ex.Message}");
         }
         return false;
     }
 
+    // Retrieves the airline that owns a specific flight
     public Airline GetAirlineFromFlight(Flight flight)
     {
-        foreach (var airline in Airlines.Values)
+        try
         {
-            if (airline.Flights.ContainsKey(flight.FlightNumber))
-                return airline;
+            foreach (var airline in Airlines.Values)
+            {
+                if (airline.Flights.ContainsKey(flight.FlightNumber))
+                    return airline;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving airline for flight {flight.FlightNumber}: {ex.Message}");
         }
         return null;
     }
 
+    // Printing the fees for all boarding gates
     public void PrintAirlineFees()
     {
         foreach (var fee in GateFees)
@@ -76,6 +109,7 @@ public class BoardingGate
         SupportsLWTT = supportsLWTT;
     }
 
+    //Base fees for this specific gates
     public double CalculateFees()
     {
         double baseFee = 300;
@@ -100,16 +134,27 @@ public class Airline
         Code = code;
     }
 
-    public bool AddFlight(Flight flight)
+    // Adding of flight to the airline's list of flights
+    public bool AddFlight(Flight flight, Terminal terminal)
     {
-        if (!Flights.ContainsKey(flight.FlightNumber))
+        try
         {
-            Flights[flight.FlightNumber] = flight;
-            return true;
+            if (!Flights.ContainsKey(flight.FlightNumber))
+            {
+                Flights[flight.FlightNumber] = flight;
+                terminal.Flights[flight.FlightNumber] = flight; // Add to Terminal's flight list as well
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding flight {flight.FlightNumber}: {ex.Message}");
         }
         return false;
     }
 
+
+    //Total fees for this airline's flights
     public double CalculateFees()
     {
         double totalFees = 0;
@@ -120,6 +165,7 @@ public class Airline
         return totalFees;
     }
 
+    //Removes a flight from the airline's list
     public bool RemoveFlight(Flight flight)
     {
         return Flights.Remove(flight.FlightNumber);
@@ -219,6 +265,7 @@ class Program
 {
     private Terminal terminal = new Terminal();
 
+    //Calculates total fees for all the flights in the terminal
     public void CalculateTotalFee()
     {
         try
@@ -236,11 +283,12 @@ class Program
         }
     }
 
+    //Reads airline data from airlines.csv and adds airlines to the terminal
     void ReadAirlines()
     {
         try
         {
-            string[] lines = File.ReadAllLines("C:\\Users\\Admin\\Downloads\\airlines.csv");
+            string[] lines = File.ReadAllLines("airlines.csv");
             for (int i = 1; i < lines.Length; i++)
             {
                 string[] data = lines[i].Split(',');
@@ -252,6 +300,8 @@ class Program
                 string airlineCode = data[1];
 
                 Airline airline = new Airline(airlineName, airlineCode);
+
+                //If airline already exists
                 if (!terminal.AddAirline(airline))
                 {
                     Console.WriteLine($"Airline with code {airlineCode} already exists.");
@@ -272,11 +322,13 @@ class Program
         }
     }
 
+
+    //Reads boarding gates data from boardinggates.csv and adds gates to the terminal
     void ReadBoardingGates()
     {
         try
         {
-            string[] lines = File.ReadAllLines("C:\\Users\\Admin\\Downloads\\boardinggates.csv");
+            string[] lines = File.ReadAllLines("boardinggates.csv");
             for (int i = 1; i < lines.Length; i++)
             {
                 string[] data = lines[i].Split(',');
@@ -291,6 +343,8 @@ class Program
                 bool supportsLWTT = data[3] == "True";
 
                 BoardingGate gate = new BoardingGate(gateName, supportsCFFT, supportsDDJB, supportsLWTT);
+
+                //If boarding gate data already exists
                 if (!terminal.AddBoardingGate(gate))
                 {
                     Console.WriteLine($"Boarding gate {gateName} already exists.");
@@ -310,7 +364,7 @@ class Program
             Console.WriteLine($"Error reading boarding gates: {ex.Message}");
         }
     }
-
+    //Displays a list of airlines and asks user for airline code 
     void DisplayAirlinesFlights()
     {
         Console.WriteLine("=============================================");
@@ -364,6 +418,7 @@ class Program
         Console.WriteLine("\n\n\n\n\n");
     }
 
+    //Match airline code with their respective airlines
     public static class AirlineHelper
     {
         public static string GetAirlineNameFromCode(string airlineCode)
@@ -383,6 +438,7 @@ class Program
         }
     }
 
+    //Displays a list of boarding gates
     void ListBoardingGates()
     {
         Console.WriteLine("=============================================");
@@ -397,6 +453,7 @@ class Program
         Console.WriteLine("\n\n\n\n\n");
     }
 
+    //Assign boarding gate to flight
     void AssignGateToFlight()
     {
         try
@@ -499,39 +556,116 @@ class Program
     {
         try
         {
-            Console.Write("Enter Flight Number: ");
-            string flightNumber = Console.ReadLine();
-
-            Console.Write("Enter Origin: ");
-            string origin = Console.ReadLine();
-
-            Console.Write("Enter Destination: ");
-            string destination = Console.ReadLine();
-
-            Console.Write("Enter Expected Departure/Arrival Time (dd/mm/yyyy hh:mm): ");
-            string expectedTime = Console.ReadLine();
-
-            DateTime expectedDateTime;
-            if (!DateTime.TryParseExact(expectedTime, "d/M/yyyy HH:mm", null, System.Globalization.DateTimeStyles.None, out expectedDateTime))
+            string flightNumber = ""; 
+            bool validFlightNumber = false;
+            
+            while (!validFlightNumber)
             {
-                Console.WriteLine("Invalid date format. Please enter the time in the correct format (dd/mm/yyyy hh:mm).");
-                return;
+                Console.Write("Enter Flight Number: ");
+                flightNumber = Console.ReadLine();
+
+                if (!string.IsNullOrWhiteSpace(flightNumber)) 
+                {
+                    validFlightNumber = true;
+                }
+                else
+                {
+                    Console.WriteLine("Flight Number cannot be empty. Please enter a valid flight number.");
+                }
             }
 
-            Console.Write("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
-            string specialRequestCode = Console.ReadLine().ToUpper();
 
-            if (specialRequestCode != "CFFT" && specialRequestCode != "DDJB" && specialRequestCode != "LWTT" && specialRequestCode != "NONE")
+            string origin = "";
+            bool validOrigin = false;
+
+            //Origin must not be a number
+            while (!validOrigin)
             {
-                Console.WriteLine("Invalid Special Request Code. Please enter a valid code (CFFT, DDJB, LWTT, or None).");
-                return;
+                Console.Write("Enter Origin: ");
+                origin = Console.ReadLine();
+
+                if (!origin.Any(char.IsDigit))
+                {
+                    validOrigin = true;
+                }
+                else
+                {
+                    Console.WriteLine("Origin cannot contain numbers. Please enter a valid origin.");
+                }
+            }
+
+            string destination = ""; 
+            bool validDestination = false;
+
+            //Destination must not be a number
+            while (!validDestination)
+            {
+                Console.Write("Enter Destination: ");
+                destination = Console.ReadLine();
+
+                if (!destination.Any(char.IsDigit))  
+                {
+                    validDestination = true;
+                }
+                else
+                {
+                    Console.WriteLine("Destination cannot contain numbers. Please enter a valid destination.");
+                }
+            }
+
+            DateTime expectedDateTime = DateTime.MinValue;
+            bool validDate = false;
+
+            //Check date format
+            while (!validDate)
+            {
+                try
+                {
+                    Console.Write("Enter Expected Departure/Arrival Time (dd/mm/yyyy hh:mm): ");
+                    string expectedTime = Console.ReadLine();
+
+                    if (!DateTime.TryParseExact(expectedTime, "d/M/yyyy HH:mm", null, System.Globalization.DateTimeStyles.None, out expectedDateTime))
+                    {
+                        throw new FormatException("Invalid date format. Please enter the time in the correct format (dd/mm/yyyy hh:mm).");
+                    }
+
+                    validDate = true;
+                }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            string specialRequestCode = string.Empty;
+            bool validRequestCode = false;
+
+            //Check if request code exists
+            while (!validRequestCode)
+            {
+                try
+                {
+                    Console.Write("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
+                    specialRequestCode = Console.ReadLine().ToUpper();
+
+                    if (specialRequestCode != "CFFT" && specialRequestCode != "DDJB" && specialRequestCode != "LWTT" && specialRequestCode != "NONE")
+                    {
+                        throw new ArgumentException("Invalid Special Request Code. Please enter a valid code (CFFT, DDJB, LWTT, or None).");
+                    }
+
+                    validRequestCode = true;
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
 
             Flight newFlight = new NORMFlight
             {
-                FlightNumber = flightNumber,
-                Origin = origin,
-                Destination = destination,
+                FlightNumber = flightNumber,  
+                Origin = origin,             
+                Destination = destination,    
                 ExpectedTime = expectedDateTime,
                 Status = "Scheduled",
             };
@@ -562,7 +696,7 @@ class Program
     {
         try
         {
-            string[] lines = File.ReadAllLines("C:\\Users\\Admin\\Downloads\\flights.csv");
+            string[] lines = File.ReadAllLines("flights.csv");
             for (int i = 1; i < lines.Length; i++)
             {
                 string[] data = lines[i].Split(',');
@@ -645,8 +779,6 @@ class Program
         Console.WriteLine("List of Airlines for Changi Airport Terminal 5");
         Console.WriteLine("=============================================");
         Console.WriteLine("{0,-15} {1,-20}", "Airline Code", "Airline Name");
-
-        // List all airlines
         Console.WriteLine("{0,-15} {1,-20}", "SQ", "Singapore Airlines");
         Console.WriteLine("{0,-15} {1,-20}", "MH", "Malaysia Airlines");
         Console.WriteLine("{0,-15} {1,-20}", "JL", "Japan Airlines");
@@ -811,7 +943,6 @@ class Program
                 flight.Status,
                 flight.BoardingGate ?? "-");
         }
-
         Console.WriteLine("\n\n\n\n\n");
     }
 
@@ -836,13 +967,13 @@ class Program
         Console.Write("Please select your option:\n");
     }
 
-    //Advanced//
+    //Advanced Features
 
     public void UnassignedFlights()
     {
         try
         {
-            //  Find all unassigned flights and add them to a queue//
+            //Find all unassigned flights and add them to a queue
             Queue<Flight> unassignedFlights = new Queue<Flight>();
             foreach (var flight in terminal.Flights.Values)
             {
@@ -863,7 +994,7 @@ class Program
 
             Console.WriteLine($"Total number of Flights without Boarding Gate assigned: {unassignedFlights.Count}");
 
-            //  Find all unassigned boarding gates//
+            //Find all unassigned boarding gates
             List<BoardingGate> unassignedGates = new List<BoardingGate>();
             foreach (var gate in terminal.BoardingGates.Values)
             {
@@ -875,7 +1006,7 @@ class Program
 
             Console.WriteLine($"Total number of Boarding Gates without a Flight assigned: {unassignedGates.Count}");
 
-            // Assign boarding gates to unassigned flights//
+            //Assign boarding gates to unassigned flights
             int flightsAssigned = 0;
             int gatesAssigned = 0;
 
@@ -884,7 +1015,7 @@ class Program
                 var flight = unassignedFlights.Dequeue();
                 BoardingGate assignedGate = null;
 
-                // Find a gate that matches the flight's special request code//
+                //Find a gate that matches the flight's special request code
                 if (flight is DDJBFlight)
                 {
                     foreach (var gate in unassignedGates)
@@ -932,7 +1063,7 @@ class Program
 
                 if (assignedGate != null)
                 {
-                    // Assign the gate to the flight//
+                    //Assign the gate to the flight
                     assignedGate.Flight = flight;
                     flight.BoardingGate = assignedGate.GateName;
                     unassignedGates.Remove(assignedGate);
@@ -940,7 +1071,7 @@ class Program
                     flightsAssigned++;
                     gatesAssigned++;
 
-                    // Display the basic information of the flight//
+                    //Display the basic information of the flight
                     Console.WriteLine("=============================================\n");
                     Console.WriteLine($"Flight Number: {flight.FlightNumber}");
                     Console.WriteLine($"Airline Name: {terminal.GetAirlineFromFlight(flight)?.Name ?? "Unknown Airline"}");
@@ -957,7 +1088,7 @@ class Program
                 }
             }
 
-            //Calculate and display statistics//
+            //Calculate and display statistics
             int totalFlights = terminal.Flights.Count;
             int totalGates = terminal.BoardingGates.Count;
 
@@ -1173,11 +1304,9 @@ class Program
                             case 8:
                                 program.UnassignedFlights();
                                 break;
-
                             case 9:
                                 program.TotalAirlineFee();
                                 break;
-
                             case 0:
                                 Console.WriteLine("Goodbye!");
                                 return;
